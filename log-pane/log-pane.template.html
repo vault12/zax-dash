@@ -1,0 +1,26 @@
+<div class="log-pane">
+  <div class="panel panel-default">
+    <div class="panel-heading">
+      <h3 class="panel-title">Request Log</h3>
+      <span class="pull-right" ng-click="toggleShow()">{{ visible }}</span>
+    </div>
+    <table class="table">
+     <thead>
+       <tr>
+         <td>Time</td>
+         <td>Type</td>
+         <td>Status</td>
+         <td>Info</td>
+       </tr>
+     </thead>
+     <tbody>
+       <tr ng-repeat="entry in logEntries">
+         <td>{{ entry.time }}</td>
+         <td>{{ entry.type }}</td>
+         <td>{{ entry.status }}</td>
+         <td>{{ entry.info }}</td>
+       </tr>
+     </tbody>
+    </table>
+  </div>
+</div>

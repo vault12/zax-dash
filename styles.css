@@ -1,0 +1,19 @@
+body {
+  padding-top: 60px; }
+
+div.info-pane {
+  width: 80%;
+  margin: auto; }
+
+div.log-pane {
+  width: 80%;
+  margin: auto; }
+
+div.request-pane {
+  width: 80%;
+  margin: auto; }
+  div.request-pane .request-type-select {
+    margin-bottom: 5px; }
+  div.request-pane .btn-group {
+    margin: auto;
+    width: 97%; }

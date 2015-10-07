@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <!--  angular -->
+    <script src="node_modules/angular/angular.min.js"></script>
+    <script src="node_modules/angular-route/angular-route.min.js"></script>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>ZAX Relay Information</title>
+
+    <!-- Bootstrap -->
+    <link href="node_modules/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!--  app styles-->
+    <link rel="stylesheet" href="styles.css" media="screen" title="no title" charset="utf-8">
+    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+  </head>
+  <body>
+    <nav class="navbar navbar-inverse navbar-fixed-top">
+      <div class="container-fluid">
+        <div class="navbar-header">
+          <a class="navbar-brand" href="#">ZAX Relay Dashboard</a>
+        </div>
+      </div>
+    </nav>
+
+    <div ng-app="app">
+      <!--  relay server info -->
+      <info-pane></info-pane>
+
+      <!--  relay server request tool -->
+      <request-pane></request-pane>
+
+      <!--  request log panel -->
+      <log-pane></log-pane>
+    </div>
+
+    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+    <!-- Include all compiled plugins (below), or include individual files as needed -->
+    <script src="node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
+    <!--  include our app code last-->
+    <script src="app.js"></script>
+  </body>
+</html>

@@ -1,0 +1,63 @@
+<div class="request-pane">
+  <div class="panel panel-default">
+    <div class="panel-heading">
+      <h3 class="panel-title">Request Tool</h3>
+      <span class="pull-right" ng-click="toggleShow()">{{ visible }}</span>
+    </div>
+    <div class="panel-body">
+      <div class="request-type-select">
+        <ul class="nav nav-tabs nav-justified">
+          <li role="presentation"
+              ng-class="{active: request.active} "
+              ng-repeat="request in requestTypes"
+              ng-click="changeMessageType(request.type)">
+              <a href="#">{{ request.name }}</a>
+          </li>
+        </ul>
+      </div>
+
+      <div class="request">
+        <div class="row">
+          <div class="col-sm-4">
+            <div class="panel panel-primary">
+              <div class="panel-heading">
+                <h3 class="panel-title">Options</h3>
+              </div>
+              <div class="panel-body">
+                Panel content
+              </div>
+            </div>
+          </div><!-- /.col-sm-4 -->
+          <div class="col-sm-4">
+            <div class="panel panel-info">
+              <div class="panel-heading">
+                <h3 class="panel-title">Request</h3>
+              </div>
+              <div class="panel-body">
+                Panel content
+              </div>
+            </div>
+          </div><!-- /.col-sm-4 -->
+          <div class="col-sm-4">
+            <div class="panel panel-success">
+              <div class="panel-heading">
+                <h3 class="panel-title">Response</h3>
+              </div>
+              <div class="panel-body">
+                Panel content
+              </div>
+            </div>
+          </div><!-- /.col-sm-4 -->
+          <div class="btn-group btn-group-justified" role="group">
+            <div class="btn-group" role="group">
+              <button type="button" class="btn btn-default btn-danger">Cancel</button>
+            </div>
+            <div class="btn-group" role="group">
+              <button type="button" class="btn btn-default btn-success">Send</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
