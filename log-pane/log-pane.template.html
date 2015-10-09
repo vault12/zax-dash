@@ -7,18 +7,18 @@
     <table class="table">
      <thead>
        <tr>
-         <td>Time</td>
-         <td>Type</td>
-         <td>Status</td>
-         <td>Info</td>
+         <th>type</th>
+         <th>time</th>
+         <th>url</th>
+         <th>data</th>
        </tr>
      </thead>
      <tbody>
        <tr ng-repeat="entry in logEntries">
-         <td>{{ entry.time }}</td>
          <td>{{ entry.type }}</td>
-         <td>{{ entry.status }}</td>
-         <td>{{ entry.info }}</td>
+         <td>{{ entry.time }}</td>
+         <td>{{ entry.url }}</td>
+         <td>{{ entry.data }}</td>
        </tr>
      </tbody>
     </table>

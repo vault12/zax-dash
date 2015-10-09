@@ -1,16 +1,8 @@
 class CryptoService
-  transactions: {}
 
   constructor: ($window)->
-
-  logRequest: (transaction_id, request)->
-    @transactions[transaction_id] = request: request
-
-  logResponse: (transaction_id, response)->
-    @transactions[transaction_id] = response: response
-
-  all: ->
-    @transactions
+    @glow = $window.glow
+    @nacl = $window.nacl_factory.instantiate()
 
 angular
   .module 'app'
