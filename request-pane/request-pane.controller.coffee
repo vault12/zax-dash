@@ -2,7 +2,8 @@ class RequestPaneController
   mailboxes: {}
   constructor: (base64, RelayService, $scope)->
     # what mailboxes are we looking at?
-    $scope.mailboxes = @mailboxes
+    $scope.mailboxes = RelayService.mailboxes
+    $scope.relay = RelayService.relay
     $scope.addMailbox = @addMailbox
     $scope.selectMailbox = @selectMailbox
     $scope.activeMailbox = null
@@ -11,47 +12,30 @@ class RequestPaneController
     $scope.mailbox = {}
     $scope.addMailboxVisible = true
 
-    #command we're going to run on active mailbox
-    $scope.changeActiveCommand = (command)->
-      $scope.activeCommand = command
+    # mailbox commands
+    $scope.messageCount = (mailbox)->
+      RelayService.messageCount(mailbox).then (data)->
+        mailbox.messageCount = "#{$scope.relay.result}"
 
-    $scope.changeActiveCommand "count"
+    $scope.getMessages = (mailbox)->
+      RelayService.getMessages(mailbox).then ->
+        console.log mailbox.lastDownload
 
-    # actual communication
-    $scope.createSession = ->
-      RelayService.startSession().then (startResponse)->
-        RelayService.verifySession().then (verifyResponse)->
-        $scope.session_info.client_token = $scope.session.client_token_text
-        $scope.session_info.relay_token = base64.decode startResponse
-        $scope.sessionCreated = true
+    $scope.sendMessage = (recipient, mailbox)->
+      console.log recipient, mailbox, mailbox.messageToSend
+      RelayService.sendToVia(recipient, mailbox, {message: mailbox.messageToSend}).then (data)->
+        mailbox.messageToSend = ""
 
-    $scope.connectMailbox = ->
-      RelayService.connectMailbox($scope.activeMailbox).then (response)->
-        $scope.activeMailbox.connected = true
+      then: (fn)->
+        fn(3);
 
-    $scope.session = RelayService.session
-    $scope.session_info = {}
-
-    $scope.runCommand = ->
-      RelayService.runCommand($scope.activeCommand, $scope.activeMailbox).then (response)->
-        $scope.lastCommandResult = base64.decode response
+    $scope.deleteMailbox = (mailbox)->
+      RelayService.destroyMailbox(mailbox)
 
     # internals
-    $scope.addMailbox = ->
-      name = $scope.mailbox.name
-      box = RelayService.newMailbox(name)
-      box.name = name
-      @mailboxes[$scope.mailbox.name] = box
-      $scope.mailbox = {}
-      @selectMailbox box.name
-      console.log @mailboxes
+    $scope.addMailbox = (name, seed = null)->
+      box = RelayService.newMailbox(name, seed)
 
-    # select a mailbox for use
-    $scope.selectMailbox = (name)->
-      $scope.activeMailbox = null
-      return unless @mailboxes[name]
-      $scope.activeMailbox = @mailboxes[name]
-      $scope.addMailboxVisible = false
 
 
 

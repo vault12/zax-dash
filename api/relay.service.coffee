@@ -6,42 +6,54 @@ class RelayService
 
   constructor: (@$http, @$q, @CryptoService, $location, @base64)->
     @host = 'http://104.236.171.11' #$location.host()
-    @_newSession()
+    @_newRelay()
 
   # relay commands
+  messageCount: (mailbox)->
+    @_defer(=> mailbox.connectToRelay(@relay)).then =>
+      @_defer(=> mailbox.relay_count())
 
-  startSession: ->
-    deffered = @$q.defer()
-    deffered.resolve @session.getServerToken()
-    deffered.promise
-
-  verifySession: ->
-    deffered = @$q.defer()
-    deffered.resolve @session.getServerKey()
-    deffered.promise
-
-  connectMailbox: (mailbox)->
-    deffered = @$q.defer()
-    deffered.resolve @session.connectMailbox mailbox
-    deffered.promise
-
-  runCommand: (command, mailbox)->
-    deffered = @$q.defer()
-    deffered.resolve @session.runCmd(command, mailbox)
-    deffered.promise
+  getMessages: (mailbox)->
+    @_defer(=> mailbox.getRelayMessages(@relay))
 
   # mailbox wrapper
-  newMailbox: (mailboxName)->
+  newMailbox: (mailboxName, seed)->
     return unless mailboxName
-    @mailboxes[mailboxName] = new @CryptoService.glow.MailBox(mailboxName)
+    # make our mailboxes
+    unless seed
+      mailbox = new @CryptoService.Mailbox(mailboxName)
+    else
+      mailbox = new @CryptoService.Mailbox.fromSeed(mailboxName, seed)
 
+    # share keys among mailboxes
+    for name, mbx of @mailboxes
+      mbx.keyRing.addGuest(mailboxName, mailbox.getPubCommKey())
+      mailbox.keyRing.addGuest(mbx.keyRing.storage.root ,mbx.getPubCommKey())
 
+    # save the mailbox
+    @mailboxes[mailboxName] = mailbox
 
+  destroyMailbox: (mailbox)->
+    for name, mbx of @mailboxes
+      if mailbox.keyRing.storage.root == mbx.keyRing.storage.root
+        mailbox.selfDestruct(true)
+        delete @mailboxes[name]
+
+  sendToVia: (recipient, mailbox, message)->
+    deffered = @$q.defer()
+    deffered.resolve mailbox.sendToVia(recipient, @relay, message)
+    deffered.promise
   # internal stuffs
 
-  _newSession: ->
-    @session = new @CryptoService.glow.Relay(@host)
-    @session.client_token_text = @_randomString()
+  # shortcut for converting .done to promise
+  _defer: (fnToDefer)->
+    deffered = @$q.defer()
+    deffered.resolve fnToDefer()
+    deffered.promise
+
+  _newRelay: ->
+    @relay = new @CryptoService.Relay(@host)
+    @relay.client_token_text = @_randomString()
 
   _concat: (arrays...)->
     concatArray = []
