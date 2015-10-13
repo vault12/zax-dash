@@ -1,90 +1,107 @@
 <div class="request-pane">
   <div class="panel panel-default">
     <div class="panel-heading">
-      <h3 class="panel-title">Session Tool</h3>
+      <h3 class="panel-title">Test Tool</h3>
       <span class="pull-right" ng-click="toggleShow()">{{ visible }}</span>
     </div>
     <div class="panel-body">
       <div class="request">
         <div class="row">
           <div class="col-sm-12">
-            <!--  start session -->
-            <div class="panel panel-info" >
-              <div class="panel-heading">
-                <h3 class="panel-title">Start Session (/start_session)</h3>
-              </div>
-              <div class="panel-body">
-                <div class="input-group" ng-hide="session_info.started">
-                  <input type="text" class="form-control" value="{{session_info.client_token}}">
-                  <span class="input-group-btn">
-                    <button class="btn btn-default" type="button" ng-click="start()">Go!</button>
-                  </span>
-                </div>
-
-                <div class="well"  ng-hide="!session_info.started">
-                  client_token: {{ session_info.client_token }} <br/>
-                </div>
-              </div>
-            </div>
-
             <!--  verify session -->
-            <div class="panel panel-info" ng-hide="!session_info.started">
+            <div class="panel" ng-class="{'panel-danger': !sessionCreated, 'panel-success': sessionCreated}">
               <div class="panel-heading">
-                <h3 class="panel-title">Verify Session (/verify_session)</h3>
+                <h3 class="panel-title">Create Session
+                  <a
+                    class="pull-right"
+                    ng-click="createSession()"
+                    ng-hide="sessionCreated">[Create]</a>
+                  <a
+                    class="pull-right"
+                    ng-click="sessionInfoVisible = !sessionInfoVisible"
+                    ng-hide="!sessionCreated">[expand]</a>
+                  </h3>
               </div>
-              <div class="panel-body">
+              <div class="panel-body" ng-show="sessionCreated && sessionInfoVisible">
                 <div class="well">
                   client_token: {{session_info.client_token}} <br/>
                   relay_token: {{session_info.relay_token}}
                 </div>
-                <button class="btn btn-default" type="button" name="button" ng-click="verify()">Verify</button>
+
               </div>
             </div>
           </div>
         </div>
-
-        <!-- run command -->
-        <div class="row">
-          <div class="col-sm-12">
-            <div class="panel panel-success" ng-hide="!session_info.verified">
-              <div class="panel-heading">
-                <h3 class="panel-title">Command</h3>
+        <!--  mailbox selector-->
+        <div class="panel panel-info" ng-hide="!sessionCreated">
+          <div class="panel-heading">
+            <h3 class="panel-title">Mailboxes</h3>
+          </div>
+          <div class="panel-body">
+            <ul class="nav nav-tabs">
+              <li role="presentation"
+                  ng-class="{active: mailbox.name == activeMailbox.name}"
+                  ng-repeat="mailbox in mailboxes"
+                  >
+                  <a href="#" ng-click="selectMailbox(mailbox.name)" >{{ mailbox.name }}</a>
+              </li>
+              <li ng-class="{active: addMailboxVisible}"><a ng-click="addMailboxVisible = !addMailboxVisible">Add...</a></li>
+            </ul>
+            <br />
+            <div class="row" ng-hide="!addMailboxVisible">
+              <div class="col-lg-4">
+                <div class="input-group">
+                  <input type="text" class="form-control" ng-model="mailbox.name" placeholder="Mailbox Name" aria-describedby="basic-addon1">
+                </div>
               </div>
-              <div class="panel-body">
+              <div class="col-lg-6">
+                <div class="input-group">
+                  <input type="text" class="form-control" ng-model="mailbox.hpk" placeholder="Mailbox HPK" aria-describedby="basic-addon1">
+                </div>
+              </div>
+              <div class="col-lg-2">
+                <div class="btn-group" role="group" aria-label="...">
+                  <button type="button" class="btn btn-default" ng-click="addMailbox()">Save</button>
+                </div>
+              </div>
+            </div>
+
+            <div class="panel" ng-class="{'panel-danger': !activeMailbox.connected, 'panel-success': activeMailbox.connected}" ng-hide="addMailboxVisible">
+              <div class="panel-heading">
+                <h3 class="panel-title">Commands
+                <a class="pull-right" ng-click="connectMailbox()" ng-hide="activeMailbox.connected">[connect]</a></h3>
+              </div>
+              <div class="panel-body" ng-hide="!activeMailbox.connected">
                 <div class="request-type-select">
-                  <ul class="nav nav-tabs nav-justified">
+                  <ul class="nav nav-pills nav-justified">
                     <li role="presentation"
-                        ng-class="{active: request.name == activeSession.name}"
+                        ng-class="{active: command == activeCommand}"
                         ng-repeat="command in session.RELAY_COMMANDS"
-                        ng-click="changeCommandTab(command)">
+                        ng-click="changeActiveCommand(command)">
                         <a href="#">{{ command }}</a>
                     </li>
                   </ul>
                 </div>
-                <div class="panel panel-primary">
-                  <div class="panel-heading">
-                    <h3 class="panel-title">Options</h3>
+                <div class="row">
+                  <div class="col-sm-6">
+                    <h4>Options:</h4>
+                    <input type="text" placeholder="to" value="" ng-model="activeCommand.to"/>
+                    <input type="text" placeholder="payload" value="" ng-model="activeCommand.payload"/>
                   </div>
-                  <div class="panel-body">
-                    <div class="input-group input-group-sm" ng-repeat="field in activeSession.fields">
-                      <span class="input-group-addon" id="sizing-addon3">{{field}}</span>
-                      <input type="text" class="form-control" placeholder="{{field}}">
+                  <div class="col-sm-6">
+                    <h4>Results:</h4>
+                    <div class="well">
+                      {{ lastCommandResult }}
                     </div>
-                    <span ng-hide="activeSession.fields.length > 0">No user definable options</span>
                   </div>
                 </div>
+                <button class="btn btn-default pull-right" ng-click="runCommand(activeCommand)">Run</button>
               </div>
             </div>
-          </div><!-- /.col-sm-4 -->
-          <!-- <div class="btn-group btn-group-justified" role="group">
-            <div class="btn-group" role="group">
-              <button type="button" class="btn btn-default btn-danger" ng-click="cancel">Cancel</button>
-            </div>
-            <div class="btn-group" role="group">
-              <button type="button" class="btn btn-default btn-success" ng-click="send()">Send</button>
-            </div>
-          </div> -->
+
+          </div>
         </div>
+
       </div>
     </div>
   </div>

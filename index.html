@@ -28,14 +28,113 @@
     </nav>
 
     <div ng-app="app">
-      <!--  relay server info -->
-      <info-pane></info-pane>
+      <div class="request-pane" ng-controller="RequestPaneController">
+        <div class="panel panel-default">
+          <div class="panel-heading">
+            <h3 class="panel-title">Test Tool</h3>
+          </div>
+          <div class="panel-body">
+            <div class="request">
+              <div class="row">
+                <div class="col-sm-12">
+                  <div class="panel" ng-class="{'panel-danger': !sessionCreated, 'panel-success': sessionCreated}">
+                    <div class="panel-heading">
+                      <h3 class="panel-title">Create Session
+                        <a
+                          class="pull-right"
+                          ng-click="createSession()"
+                          ng-hide="sessionCreated">[Create]</a>
+                        <a
+                          class="pull-right"
+                          ng-click="sessionInfoVisible = !sessionInfoVisible"
+                          ng-hide="!sessionCreated">[expand]</a>
+                        </h3>
+                    </div>
+                    <div class="panel-body" ng-show="sessionCreated && sessionInfoVisible">
+                      <div class="well">
+                        client_token: {{session_info.client_token}} <br/>
+                        relay_token: {{session_info.relay_token}}
+                      </div>
 
-      <!--  relay server request tool -->
-      <request-pane></request-pane>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <!--  mailbox selector-->
+              <div class="panel panel-info" ng-hide="!sessionCreated">
+                <div class="panel-heading">
+                  <h3 class="panel-title">Mailboxes</h3>
+                </div>
+                <div class="panel-body">
+                  <ul class="nav nav-tabs">
+                    <li role="presentation"
+                        ng-class="{active: mailbox.name == activeMailbox.name}"
+                        ng-repeat="mailbox in mailboxes"
+                        >
+                        <a href="#" ng-click="selectMailbox(mailbox.name)" >{{ mailbox.name }}</a>
+                    </li>
+                    <li ng-class="{active: addMailboxVisible}"><a ng-click="addMailboxVisible = !addMailboxVisible">Add...</a></li>
+                  </ul>
+                  <br />
+                  <div class="row" ng-hide="!addMailboxVisible">
+                    <div class="col-lg-4">
+                      <div class="input-group">
+                        <input type="text" class="form-control" ng-model="mailbox.name" placeholder="Mailbox Name" aria-describedby="basic-addon1">
+                      </div>
+                    </div>
+                    <div class="col-lg-6">
+                      <div class="input-group">
+                        <input type="text" class="form-control" ng-model="mailbox.hpk" placeholder="Mailbox HPK" aria-describedby="basic-addon1">
+                      </div>
+                    </div>
+                    <div class="col-lg-2">
+                      <div class="btn-group" role="group" aria-label="...">
+                        <button type="button" class="btn btn-default" ng-click="addMailbox()">Save</button>
+                      </div>
+                    </div>
+                  </div>
 
-      <!--  request log panel -->
-      <log-pane></log-pane>
+                  <div class="panel" ng-class="{'panel-danger': !activeMailbox.connected, 'panel-success': activeMailbox.connected}" ng-hide="addMailboxVisible">
+                    <div class="panel-heading">
+                      <h3 class="panel-title">Commands
+                      <a class="pull-right" ng-click="connectMailbox()" ng-hide="activeMailbox.connected">[connect]</a></h3>
+                    </div>
+                    <div class="panel-body" ng-hide="!activeMailbox.connected">
+                      <div class="request-type-select">
+                        <ul class="nav nav-pills nav-justified">
+                          <li role="presentation"
+                              ng-class="{active: command == activeCommand}"
+                              ng-repeat="command in session.RELAY_COMMANDS"
+                              ng-click="changeActiveCommand(command)">
+                              <a href="#">{{ command }}</a>
+                          </li>
+                        </ul>
+                      </div>
+                      <div class="row">
+                        <div class="col-sm-6">
+                          <h4>Options:</h4>
+                          <input type="text" placeholder="to" value="" ng-model="activeCommand.to"/>
+                          <input type="text" placeholder="payload" value="" ng-model="activeCommand.payload"/>
+                        </div>
+                        <div class="col-sm-6">
+                          <h4>Results:</h4>
+                          <div class="well">
+                            {{ lastCommandResult }}
+                          </div>
+                        </div>
+                      </div>
+                      <button class="btn btn-default pull-right" ng-click="runCommand(activeCommand)">Run</button>
+                    </div>
+                  </div>
+
+                </div>
+              </div>
+
+            </div>
+          </div>
+        </div>
+      </div>
+
     </div>
     <!--  angular -->
     <script src="node_modules/angular/angular.min.js"></script>
