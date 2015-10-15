@@ -18,12 +18,26 @@ class RequestPaneController
         mailbox.messageCount = "#{$scope.relay.result}"
 
     $scope.getMessages = (mailbox)->
-      RelayService.getMessages(mailbox).then ->
-        console.log mailbox.lastDownload
+      RelayService.getMessages(mailbox).then (data)->
+        if !mailbox.messages
+          mailbox.messages = []
+          mailbox.messagesNonces = []
+        for msg, i in mailbox.lastDownload
+          msg.meta = mailbox.downloadMeta[i]
+          console.log data
+          if mailbox.messagesNonces.indexOf msg.meta.nonce == -1
+            mailbox.messagesNonces.push msg.meta.nonce
+            mailbox.messages.push msg
+
+    $scope.deleteMessages = (mailbox)->
+      RelayService.deleteMessages(mailbox).then ->
+        console.log "deleted messages."
+
+
 
     $scope.sendMessage = (recipient, mailbox)->
-      console.log recipient, mailbox, mailbox.messageToSend
-      RelayService.sendToVia(recipient, mailbox, {message: mailbox.messageToSend}).then (data)->
+      message = mailbox.messageToSend
+      RelayService.sendToVia(recipient, mailbox, {message}).then (data)->
         mailbox.messageToSend = ""
 
       then: (fn)->

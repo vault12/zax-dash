@@ -16,6 +16,12 @@ class RelayService
   getMessages: (mailbox)->
     @_defer(=> mailbox.getRelayMessages(@relay))
 
+  deleteMessages: (mailbox, messagesToDelete = null)->
+    if !messagesToDelete
+      messagesToDelete = (item.nonce for item in mailbox.downloadMeta)
+
+    @_defer(=> mailbox.connectToRelay(@relay)).then =>
+      @_defer(=> mailbox.relay_delete(messagesToDelete))
   # mailbox wrapper
   newMailbox: (mailboxName, seed)->
     return unless mailboxName
