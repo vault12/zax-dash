@@ -11,6 +11,7 @@
   "dependencies": {
     "angular": "^1.4.7",
     "angular-route": "^1.4.7",
+    "angular-utf8-base64": "0.0.2",
     "bootstrap": "^3.3.5",
     "coffee-script": "^1.10.0"
   },

@@ -5,7 +5,7 @@ class RelayService
 
 
   constructor: (@$http, @$q, @CryptoService, $location, @base64)->
-    @host = 'http://104.236.171.11' #$location.host()
+    @host = 'http://zax_test.vault12.com' #$location.host()
     @_newRelay()
 
   # relay commands
