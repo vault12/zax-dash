@@ -5,6 +5,7 @@ sass = require 'gulp-sass'
 concat = require 'gulp-concat'
 clean = require 'gulp-clean'
 gutil = require 'gulp-util'
+merge = require 'merge-stream'
 
 process.on 'uncaughtException', (err)->
   if not watching then throw err else gutil.log err.stack || err
@@ -14,6 +15,7 @@ conf =
     '**/*.coffee'
     '*.coffee'
     '!gulpfile.coffee'
+    '!lib/glow/**'
     '!node_modules/**/*.coffee'
     '!**/*.js'
   ]
@@ -24,6 +26,7 @@ conf =
     'styles.css'
   ]
   watch: [
+    '!lib/glow/**'
     '**/*.coffee'
     '**/*.sass'
     '**/*.html'
@@ -32,10 +35,12 @@ conf =
 watching = false
 
 gulp.task 'coffee', ->
+  libs = gulp.src ['lib/glow/dist/theglow.min.js', 'node_modules/angular-utf8-base64/angular-utf8-base64.js']
   _coffee = gulp.src conf.coffee
     .pipe coffee().on 'error', (e)->
       _coffee.end()
       if not watching then throw e else gutil.log e.stack || e
+  merge(libs,_coffee)
     .pipe concat 'app.js'
     .pipe gulp.dest conf.target
 

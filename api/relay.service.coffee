@@ -4,8 +4,12 @@ class RelayService
   mailboxes: {}
 
 
-  constructor: (@$http, @$q, @CryptoService, $location, @base64)->
-    @host = 'http://zax_test.vault12.com' #$location.host()
+  constructor: (@$http, @$q, @CryptoService, $location, @base64) ->
+    org = window.location.origin
+    test = 'http://zax_test.vault12.com'
+    # You can provide your localhost:port value instead of test
+    # for local ZAX dashboard testing
+    @host = if org.includes 'localhost' then test else org #$location.host()
     @_newRelay()
 
   # relay commands
