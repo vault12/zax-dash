@@ -17,7 +17,6 @@ class CryptoService
     @KeyRing = @glow.KeyRing
     @Keys = @glow.Keys
     @CryptoStorage = @glow.CryptoStorage
-    console.log @relayUrl()
     @CryptoStorage.startStorageSystem new @glow.SimpleStorageDriver(@relayUrl())
 
     # switch the glow ajax fn to use angular.
