@@ -8,7 +8,7 @@ class CryptoService
     @KeyRing = @glow.KeyRing
     @Keys = @glow.Keys
     @CryptoStorage = @glow.CryptoStorage
-    @CryptoStorage.startStorageSystem new @glow.TestDriver
+    @CryptoStorage.startStorageSystem new @glow.SimpleStorageDriver
 
     # switch the glow ajax fn to use angular.
     # @glow.Utils.ajax = (->
