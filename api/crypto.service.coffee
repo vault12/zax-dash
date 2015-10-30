@@ -1,5 +1,14 @@
 class CryptoService
 
+  # You can provide your localhost:port value instead of test
+  # to test local ZAX dashboard with local ZAX relay. 
+  # Take care not to mix up ports of these services when
+  # both are running locally
+  relayUrl: ->
+    org = window.location.origin
+    test = 'http://zax_test.vault12.com'
+    return if org.includes 'localhost' then test else org #$location.host()
+
   constructor: ($window, $http, $q)->
     @glow = $window.glow
     @nacl = $window.nacl_factory.instantiate()
@@ -8,7 +17,8 @@ class CryptoService
     @KeyRing = @glow.KeyRing
     @Keys = @glow.Keys
     @CryptoStorage = @glow.CryptoStorage
-    @CryptoStorage.startStorageSystem new @glow.SimpleStorageDriver
+    console.log @relayUrl()
+    @CryptoStorage.startStorageSystem new @glow.SimpleStorageDriver(@relayUrl())
 
     # switch the glow ajax fn to use angular.
     # @glow.Utils.ajax = (->
