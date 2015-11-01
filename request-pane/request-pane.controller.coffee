@@ -22,11 +22,10 @@ class RequestPaneController
         if !mailbox.messages
           mailbox.messages = []
           mailbox.messagesNonces = []
-        for msg, i in mailbox.lastDownload
-          msg.meta = mailbox.downloadMeta[i]
+        for msg in mailbox.lastDownload
           console.log data
-          if mailbox.messagesNonces.indexOf msg.meta.nonce == -1
-            mailbox.messagesNonces.push msg.meta.nonce
+          if mailbox.messagesNonces.indexOf msg.nonce == -1
+            mailbox.messagesNonces.push msg.nonce
             mailbox.messages.push msg
 
     $scope.deleteMessages = (mailbox)->
