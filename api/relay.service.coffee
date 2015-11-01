@@ -17,7 +17,7 @@ class RelayService
 
   deleteMessages: (mailbox, messagesToDelete = null)->
     if !messagesToDelete
-      messagesToDelete = (item.nonce for item in mailbox.downloadMeta)
+      messagesToDelete = mailbox.relay_nonce_list()
 
     @_defer(=> mailbox.connectToRelay(@relay)).then =>
       @_defer(=> mailbox.relay_delete(messagesToDelete))
