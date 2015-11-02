@@ -1,14 +1,23 @@
 class RequestPaneController
   mailboxes: {}
   constructor: (base64, RelayService, $scope)->
+    # some names to play with
+    first_names = ["Alice","Bob","Charlie","Chuck","Dave","Erin","Eve","Faith",
+             "Frank","Mallory","Oscar","Peggy","Pat","Sam","Sally","Sybil",
+             "Trent","Trudy","Victor","Walter","Wendy"]
+    names = []
+    for i in [2..10]
+      names.push "#{name}_#{i}" for name in first_names
+
+
     # what mailboxes are we looking at?
     $scope.mailboxes = RelayService.mailboxes
     $scope.relay = RelayService.relay
-    $scope.addMailbox = @addMailbox
-    $scope.selectMailbox = @selectMailbox
+    # $scope.addMailbox = @addMailbox
+    # $scope.selectMailbox = @selectMailbox
     $scope.activeMailbox = null
 
-    # assue we'll need to add a mailbox to play with
+    # assume we'll need to add a mailbox to play with
     $scope.mailbox = {}
     $scope.addMailboxVisible = true
 

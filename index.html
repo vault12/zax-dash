@@ -53,6 +53,52 @@
 
                     </div>
                     <div class="panel-body">
+                      <table class="table">
+                        <thead>
+                          <tr>
+                            <th>Name</th>
+                            <th>Secret Key</th>
+                            <th>Public Key</th>
+                            <th>Message Count</th>
+
+                            <th>Message Actions</th>
+                            <th></th>
+                          </tr>
+                        </thead>
+                        <tr ng-repeat="mailbox in mailboxes">
+                          <td>{{mailbox.keyRing.storage.root}}</td>
+                          <td>{{mailbox.keyRing.storage.root}}</td>
+                          <td>{{mailbox.keyRing.storage.root}}</td>
+                          <td>
+                            <div class="input-group">
+                              <span class="input-group-btn">
+                                <button
+                                  class="btn btn-default"
+                                  type="button"
+                                  ng-click="messageCount(mailbox)">Get</button>
+                              </span>
+                              <input
+                                type="text"
+                                class="form-control"
+                                ng-model="mailbox.messageCount">
+                            </div>
+                          </td>
+                          <td>
+                            <div class="input-group">
+                              <span class="input-group-btn">
+                              <!-- </span> -->
+                              <!-- <input type="text" class="form-control" ng-model="mailbox.messageCount">
+                              <span class="input-group-btn"> -->
+                                <button class="btn btn-default" type="button" ng-click="getMessages(mailbox)">Get</button>
+                                <button class="btn btn-default btn-danger" type="button" ng-click="deleteMessages(mailbox)">Delete</button>
+                              </span>
+                            </div>
+                          </td>
+                          <td>
+                            <button class="btn btn-default btn-danger" ng-click="deleteMailbox(mailbox)">Self Destruct</button>
+                          </td>
+                        </tr>
+                      </table>
                       <div class="row">
                         <div class="col-sm-6" ng-repeat="mailbox in mailboxes">
                           <div class="panel panel-info">
