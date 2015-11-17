@@ -5,9 +5,9 @@ class RequestPaneController
     first_names = ["Alice","Bob","Charlie","Chuck","Dave","Erin","Eve","Faith",
              "Frank","Mallory","Oscar","Peggy","Pat","Sam","Sally","Sybil",
              "Trent","Trudy","Victor","Walter","Wendy"]
-    names = []
-    for i in [2..10]
-      names.push "#{name}_#{i}" for name in first_names
+    @names = []
+    for i in [2..50]
+      @names.push "#{name}_#{i}" for name in first_names
 
 
     # what mailboxes are we looking at?
@@ -57,6 +57,13 @@ class RequestPaneController
     # internals
     $scope.addMailbox = (name, seed = null)->
       box = RelayService.newMailbox(name, seed)
+
+    $scope.addMailboxes = (quantityToAdd)=>
+      for i in [1..quantityToAdd]
+        $scope.addMailbox @names[1], @names[1]
+        @names.splice 0,1
+      quantityToAdd = 0
+
 
 
 

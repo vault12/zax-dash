@@ -30,177 +30,13 @@
     <nav class="navbar navbar-inverse navbar-fixed-top">
       <div class="container-fluid">
         <div class="navbar-header">
-          <a class="navbar-brand" href="#">ZAX Relay Dashboard</a>
+          <a class="navbar-brand" href="#">ZAX Dash</a>
         </div>
       </div>
     </nav>
 
     <div ng-app="app">
-      <div class="request-pane" ng-controller="RequestPaneController">
-        <div class="panel panel-default">
-          <div class="panel-heading">
-            <h3 class="panel-title">Test Tool</h3>
-          </div>
-          <div class="panel-body">
-            <div class="request">
-              <div class="row">
-                <div class="col-sm-12">
-                  <div class="panel panel-primary">
-                    <div class="panel-heading">
-                      <h3 class="panel-title">
-                        Mailboxes
-                      </h3>
-
-                    </div>
-                    <div class="panel-body">
-                      <table class="table">
-                        <thead>
-                          <tr>
-                            <th>Name</th>
-                            <th>Secret Key</th>
-                            <th>Public Key</th>
-                            <th>Message Count</th>
-
-                            <th>Message Actions</th>
-                            <th></th>
-                          </tr>
-                        </thead>
-                        <tr ng-repeat="mailbox in mailboxes">
-                          <td>{{mailbox.keyRing.storage.root}}</td>
-                          <td>{{mailbox.keyRing.storage.root}}</td>
-                          <td>{{mailbox.keyRing.storage.root}}</td>
-                          <td>
-                            <div class="input-group">
-                              <span class="input-group-btn">
-                                <button
-                                  class="btn btn-default"
-                                  type="button"
-                                  ng-click="messageCount(mailbox)">Get</button>
-                              </span>
-                              <input
-                                type="text"
-                                class="form-control"
-                                ng-model="mailbox.messageCount">
-                            </div>
-                          </td>
-                          <td>
-                            <div class="input-group">
-                              <span class="input-group-btn">
-                              <!-- </span> -->
-                              <!-- <input type="text" class="form-control" ng-model="mailbox.messageCount">
-                              <span class="input-group-btn"> -->
-                                <button class="btn btn-default" type="button" ng-click="getMessages(mailbox)">Get</button>
-                                <button class="btn btn-default btn-danger" type="button" ng-click="deleteMessages(mailbox)">Delete</button>
-                              </span>
-                            </div>
-                          </td>
-                          <td>
-                            <button class="btn btn-default btn-danger" ng-click="deleteMailbox(mailbox)">Self Destruct</button>
-                          </td>
-                        </tr>
-                      </table>
-                      <div class="row">
-                        <div class="col-sm-6" ng-repeat="mailbox in mailboxes">
-                          <div class="panel panel-info">
-                            <div class="panel-heading">
-                              <h3 class="panel-title">
-                                {{mailbox.keyRing.storage.root}}
-                                <button class="pull-right" ng-click="deleteMailbox(mailbox)">self-destruct</button>
-                              </h3>
-                            </div>
-                            <div class="panel-body">
-                              <h5>Actions</h5>
-                              <div class="input-group">
-                                <span class="input-group-btn">
-                                  <button class="btn btn-default" type="button" ng-click="messageCount(mailbox)">Message Count</button>
-                                </span>
-                                <input type="text" class="form-control" ng-model="mailbox.messageCount">
-                                <span class="input-group-btn">
-                                  <button class="btn btn-default" type="button" ng-click="getMessages(mailbox)">Get</button>
-                                  <button class="btn btn-default btn-danger" type="button" ng-click="deleteMessages(mailbox)">Delete</button>
-                                </span>
-                              </div>
-                              <h5>Messages</h5>
-                              <ul class="list-group">
-                                <li class="list-group-item" ng-repeat="message in mailbox.messages">
-                                  <div class="well code">
-                                    asdf
-                                    {{message | json}}
-                                  </div>
-                                </li>
-                              </ul>
-                              <h5>Keyring</h5>
-                              <ul class="list-group">
-                                <li
-                                  class="list-group-item"
-                                  ng-repeat="(guest, val) in mailbox.keyRing.guest_keys">
-                                  {{guest}}
-                                  <button class="pull-right" ng-click="sendMessage(guest, mailbox)">Send</button>
-                                </li>
-                              </ul>
-                              <h5>Outgoing Message</h5>
-                              <div class="input-group">
-                                <textarea type="text" class="form-control" ng-model="mailbox.messageToSend"></textarea>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                        <div class="col-sm-6">
-                          <div class="panel panel-warning">
-                            <div class="panel-heading">
-                              <h3 class="panel-title">Add Mailbox</h3>
-                            </div>
-                            <div class="panel-body">
-                              <form class="form">
-                                <div class="form-group">
-                                  <label for="name" >Name</label>
-                                  <input type="text" id="name" ng-model="newMailbox.name" placeholder="name" class="form-control">
-                                </div>
-                                <div class="form-group">
-                                  <label for="seed" >Seed</label>
-                                  <input type="text" id="seed" ng-model="newMailbox.seed" placeholder="seed" class="form-control">
-                                  <br />
-                                  <button class="btn btn-default pull-right" ng-click="addMailbox(newMailbox.name, newMailbox.seed)">Add</button>
-                                </div>
-                              </form>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-
-
-                  <!-- <div class="panel" ng-class="{'panel-danger': !sessionCreated, 'panel-success': sessionCreated}">
-                    <div class="panel-heading">
-                      <h3 class="panel-title">Create Session
-                        <a
-                          class="pull-right"
-                          ng-click="createSession()"
-                          ng-hide="sessionCreated">[Create]</a>
-                        <a
-                          class="pull-right"
-                          ng-click="sessionInfoVisible = !sessionInfoVisible"
-                          ng-hide="!sessionCreated">[expand]</a>
-                        </h3>
-                    </div>
-                    <div class="panel-body" ng-show="sessionCreated && sessionInfoVisible">
-                      <div class="well">
-                        client_token: {{session_info.client_token}} <br/>
-                        relay_token: {{session_info.relay_token}}
-                      </div>
-
-                    </div>
-                  </div> -->
-                </div>
-              </div>
-              <!--  mailbox selector-->
-
-
-            </div>
-          </div>
-        </div>
-      </div>
+      <request-pane></request-pane>
 
     </div>
 
@@ -213,7 +49,7 @@
     <-->
 
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.5/angular.min.js"></script>
-    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.5/angular-route.min.js"></script>    
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.5/angular-route.min.js"></script>
 
 
     <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->

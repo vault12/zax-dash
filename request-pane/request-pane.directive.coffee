@@ -7,7 +7,7 @@ requestPane = (RequestService, LoggerService, base64)->
     scope: "="
     link: (scope, attrs, element)->
 
-      
+
 
   directive
 

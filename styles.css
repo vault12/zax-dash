@@ -10,7 +10,7 @@ div.log-pane {
   margin: auto; }
 
 div.request-pane {
-  width: 80%;
+  width: 90%;
   margin: auto; }
   div.request-pane .request-type-select {
     margin-bottom: 5px; }
