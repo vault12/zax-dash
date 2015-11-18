@@ -40,17 +40,18 @@ class RequestPaneController
       RelayService.deleteMessages(mailbox).then ->
         console.log "deleted messages."
 
-    $scope.sendMessage = (recipient, mailbox)->
-      message = mailbox.messageToSend
-      RelayService.sendToVia(recipient, mailbox, {message}).then (data)->
-        mailbox.messageToSend = ""
+    $scope.sendMessage = (mailbox, outgoing)->
+      message = outgoing.message
+      recipient = $scope.mailboxes[outgoing.recipient]
 
-      then: (fn)->
-        fn(3);
+      RelayService.sendToVia(recipient, mailbox, {message}).then (data)->
+        outgoing = {}
+
+      # then: (fn)->
+      #   fn(3);
 
     $scope.deleteMailbox = (mailbox)->
-      console.log mailbox
-      # RelayService.destroyMailbox(mailbox)
+      RelayService.destroyMailbox(mailbox)
 
     # show the active mailbox messages
     $scope.selectMailbox = (mailbox)->

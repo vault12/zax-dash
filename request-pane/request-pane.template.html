@@ -22,7 +22,7 @@
                 </tr>
               </thead>
               <tr ng-repeat="mailbox in mailboxes" ng-click="selectMailbox(mailbox)" ng-class="{danger: mailbox == activeMailbox}">
-                <td>{{mailbox.keyRing.storage.root}}</td>
+                <td>{{mailbox.identity}}</td>
                 <td><div class="overflow-box">{{mailbox.keyRing.comm_key.strSecKey()}}</div></td>
                 <td><div class="overflow-box">{{mailbox.keyRing.comm_key.strPubKey()}}</div></td>
                 <td>
@@ -60,19 +60,42 @@
                 <div class="col-sm-8">
                   <div class="panel panel-danger">
                     <div class="panel-heading">
-                      <h3 class="panel-title">{{activeMailbox.messages.messageCount || "0"}} messages for {{activeMailbox.keyRing.storage.root || "no mailbox selected"}}</h3>
+                      <h3 class="panel-title" ng-hide="!activeMailbox">{{activeMailbox.messageCount || "???"}} messages for {{activeMailbox.identity}}</h3>
+                      <h3 class="panel-title" ng-hide="activeMailbox">select a mailbox</h3>
                     </div>
-                    <div class="panel-body">
-                      <table>
-                        <thead>
-                          <tr><th>asdf</th></tr>
-                        </thead>
-                        <tr ng-repeat="message in activeMessages">
-                          <td>
-                            message
-                          </td>
-                        </tr>
-                      </table>
+                    <div class="panel-body" ng-hide="!activeMailbox">
+                      <div class="row">
+                        <div class="col-sm-12">
+                          <h3>Incoming Messages</h3>
+                          <table class="table table-striped">
+                            <thead>
+                              <tr><th>message</th><th>from</th><th>time</th></tr>
+                            </thead>
+                            <tr ng-repeat="message in activeMessages">
+                              <td></td>
+                              <td></td>
+                              <td></td>
+                            </tr>
+                          </table>
+                        </div>
+                      </div>
+                      <div class="row">
+                        <div class="col-sm-12">
+                          <h3>Send Message</h3>
+                          <div class="form-group">
+                            <input type="text" ng-model="outgoing.message" placeholder="message" class="form-control">
+                            <select type="text" ng-model="outgoing.recepient" placeholder="recipient" class="form-control">
+                              <option ng-repeat="mailbox in mailboxes" value="{{mailbox.identity}}">{{mailbox.identity}}</option>
+                            </select>
+                            <span class="input-group-btn">
+                              <button
+                                class="btn btn-default"
+                                type="button"
+                                ng-click="sendMessage(activeMailbox, outgoing)">Send</button>
+                            </span>
+                          </div>
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </div>
