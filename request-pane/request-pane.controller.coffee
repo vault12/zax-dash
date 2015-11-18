@@ -13,8 +13,7 @@ class RequestPaneController
     # what mailboxes are we looking at?
     $scope.mailboxes = RelayService.mailboxes
     $scope.relay = RelayService.relay
-    # $scope.addMailbox = @addMailbox
-    # $scope.selectMailbox = @selectMailbox
+
     $scope.activeMailbox = null
 
     # assume we'll need to add a mailbox to play with
@@ -41,8 +40,6 @@ class RequestPaneController
       RelayService.deleteMessages(mailbox).then ->
         console.log "deleted messages."
 
-
-
     $scope.sendMessage = (recipient, mailbox)->
       message = mailbox.messageToSend
       RelayService.sendToVia(recipient, mailbox, {message}).then (data)->
@@ -52,7 +49,12 @@ class RequestPaneController
         fn(3);
 
     $scope.deleteMailbox = (mailbox)->
-      RelayService.destroyMailbox(mailbox)
+      console.log mailbox
+      # RelayService.destroyMailbox(mailbox)
+
+    # show the active mailbox messages
+    $scope.selectMailbox = (mailbox)->
+      $scope.activeMailbox = mailbox
 
     # internals
     $scope.addMailbox = (name, seed = null)->

@@ -6,7 +6,7 @@ class CryptoService
   # both are running locally
   relayUrl: ->
     org = window.location.origin
-    test = 'http://zax_test.vault12.com'
+    test = 'https://zax_test.vault12.com'
     return if org.includes 'localhost' then test else org #$location.host()
 
   constructor: ($window, $http, $q)->
