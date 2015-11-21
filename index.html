@@ -7,14 +7,59 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>ZAX Relay Information</title>
 
-    <!-- Bootstrap -->
-    <!-- Local CSS for development -->
-    <!-- link href="node_modules/bootstrap/dist/css/bootstrap.css" rel="stylesheet" -->
-    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css" rel="stylesheet">
-    <!-- ### -->
+    <!-- Bootstrap and themes -->
+    <link href="http://geedmo.com/codecanyon/boske/assets/css/bootstrap.min.css" rel="stylesheet">
+    <!-- <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootswatch/3.3.5/readable/bootstrap.min.css" rel="stylesheet"> -->
 
     <!--  app styles-->
-    <link rel="stylesheet" href="styles.css" media="screen" title="no title" charset="utf-8">
+    <style media="screen">
+      body {
+        padding-top: 10px; }
+
+      div.info-pane {
+        width: 80%;
+        margin: auto; }
+
+      div.log-pane {
+        width: 80%;
+        margin: auto; }
+
+      div.request-pane {
+        width: 90%;
+        margin: auto; }
+        div.request-pane .request-type-select {
+          margin-bottom: 5px; }
+        div.request-pane .btn-group {
+          margin: auto;
+          width: 97%; }
+
+      table.table {
+        width: 100%;
+        table-layout: fixed; }
+
+      div.overflow-box {
+        white-space: wrap;
+        overflow: wrap;
+        text-overflow: ellipsis; }
+
+      div.overflow-box {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis; }
+
+      div.overflow-box:hover {
+        overflow: visible;
+        background: #aaddff;
+        border-radius: 3px;
+        border: 1px solid black;
+        font-size: 1.2em;
+        width: 450px;
+        height: 30px;
+        z-index: 1000;
+        position: relative;
+        padding: 3px; }
+    </style>
     <!-- ### -->
 
     <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
@@ -27,36 +72,22 @@
 
   </head>
   <body>
-    <nav class="navbar navbar-inverse navbar-fixed-top">
-      <div class="container-fluid">
-        <div class="navbar-header">
-          <a class="navbar-brand" href="#">ZAX Dash</a>
-        </div>
-      </div>
-    </nav>
-
     <div ng-app="app">
       <request-pane></request-pane>
-
     </div>
 
-    <!--  ### Local sources for development
-    <script src="node_modules/angular/angular.js"></script>
-    <script src="node_modules/angular-route/angular-route.js"></script>
-    <script src="node_modules/bootstrap/dist/js/bootstrap.js"></script>
-    <-->
-    <script src="node_modules/js-nacl/lib/nacl_factory.js"></script>
-    <script src="lib/glow/dist/theglow.min.js"></script>
-    <!-- <script src="node_modules/angular-utf8-base64/angular-utf8-base64.js"></script> -->
 
+    <!--  Javascript sources. -->
+    <!--  Local/Crypto Libs-->
+    <script src="node_modules/js-nacl/lib/nacl_factory.js"></script>
+    <script src="node_modules/@vault12/theglow/lib/theglow.js"></script>
+
+    <!--  angularjs-->
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.5/angular.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.5/angular-route.min.js"></script>
 
-
-    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+    <!--  jquery -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
-    <!-- Include all compiled plugins (below), or include individual files as needed -->
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
 
     <!--  include our app code last-->
     <script src="app.js"></script>

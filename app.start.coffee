@@ -1,1 +1,1 @@
-angular.module('app', ['utf8-base64'])
+angular.module('app', [])

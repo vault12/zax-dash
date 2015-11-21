@@ -3,8 +3,8 @@ class RelayService
   headers: {"Content-Type": "text/plain"}
   mailboxes: {}
 
-  constructor: (@$http, @$q, @CryptoService, $location, @base64) ->
-    @host = @CryptoService.relayUrl() #$location.host()
+  constructor: (@$http, @$q, @CryptoService, $location) ->
+    @host = @CryptoService.relayUrl()
     @_newRelay()
 
   # relay commands
@@ -18,22 +18,24 @@ class RelayService
   deleteMessages: (mailbox, messagesToDelete = null)->
     if !messagesToDelete
       messagesToDelete = mailbox.relay_nonce_list()
-
     @_defer(=> mailbox.connectToRelay(@relay)).then =>
       @_defer(=> mailbox.relay_delete(messagesToDelete))
+
   # mailbox wrapper
-  newMailbox: (mailboxName, seed)->
+  newMailbox: (mailboxName, options = {})=>
     return unless mailboxName
     # make our mailboxes
-    unless seed
-      mailbox = new @CryptoService.Mailbox(mailboxName)
+    if options.secret
+      mailbox = new @CryptoService.Mailbox.fromSecKey( mailboxName, options.secret)
+    else if options.seed
+      mailbox = new @CryptoService.Mailbox.fromSeed(options.seed, mailboxName)
     else
-      mailbox = new @CryptoService.Mailbox.fromSeed(mailboxName, seed)
+      mailbox = new @CryptoService.Mailbox(mailboxName)
 
     # share keys among mailboxes
     for name, mbx of @mailboxes
       mbx.keyRing.addGuest(mailboxName, mailbox.getPubCommKey())
-      mailbox.keyRing.addGuest(mbx.keyRing.storage.root ,mbx.getPubCommKey())
+      mailbox.keyRing.addGuest(mbx.identity, mbx.getPubCommKey())
 
     # save the mailbox
     @mailboxes[mailboxName] = mailbox
@@ -79,6 +81,5 @@ angular
     '$q'
     'CryptoService'
     '$location'
-    'base64'
     RelayService
   ]

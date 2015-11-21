@@ -5,13 +5,13 @@ class CryptoService
   # Take care not to mix up ports of these services when
   # both are running locally
   relayUrl: ->
-    org = window.location.origin
+    org = @$window.location.origin
     test = 'https://zax_test.vault12.com'
-    return if org.includes 'localhost' then test else org #$location.host()
+    return if org.includes 'localhost' then test else org 
 
-  constructor: ($window, $http, $q)->
-    @glow = $window.glow
-    @nacl = $window.nacl_factory.instantiate()
+  constructor: (@$window)->
+    @glow = @$window.glow
+    @nacl = @$window.nacl_factory.instantiate()
     @Mailbox = @glow.MailBox
     @Relay = @glow.Relay
     @KeyRing = @glow.KeyRing
@@ -23,7 +23,5 @@ angular
   .module 'app'
   .service 'CryptoService', [
     '$window'
-    '$http'
-    '$q'
     CryptoService
   ]

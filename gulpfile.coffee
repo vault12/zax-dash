@@ -44,17 +44,7 @@ gulp.task 'coffee', ->
     .pipe concat 'app.js'
     .pipe gulp.dest conf.target
 
-gulp.task 'sass', ->
-  _sass = gulp.src conf.sass
-    .pipe sass(
-      errLogToConsole: true
-      includePaths: conf.sass.include).on 'error', (e)->
-      _sass.end()
-      if not watching then throw e else gutil.log e.stack || e
-    .pipe concat 'styles.css'
-    .pipe gulp.dest conf.target
-
-gulp.task 'watch', ['coffee', 'sass'], ->
+gulp.task 'watch', ['coffee'], ->
   watching = true
   watch conf.watch, ->
     gulp.start "build"
@@ -63,4 +53,4 @@ gulp.task 'clean', ->
   gulp.src conf.clean, read: false
     .pipe clean()
 
-gulp.task 'build', ['clean', 'coffee', 'sass']
+gulp.task 'build', ['clean', 'coffee']

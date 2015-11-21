@@ -2,7 +2,7 @@
   "name": "zax-info",
   "version": "1.0.0",
   "description": "Information tool for ZAX relay",
-  "main": "app.js",
+  "repository": "",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "python -mSimpleHTTPServer"
@@ -16,7 +16,8 @@
     "bootstrap": "^3.3.5",
     "coffee-script": "^1.10.0",
     "js-nacl": "^0.6.0",
-    "merge-stream": "^1.0.0"
+    "merge-stream": "^1.0.0",
+    "@vault12/theglow": "^1.0.2"
   },
   "devDependencies": {
     "gulp": "^3.9.0",
