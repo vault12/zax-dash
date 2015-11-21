@@ -16,30 +16,38 @@
   </head>
   <body>
     <div ng-app="app">
+      <!-- uncommnet the following section to provide information about your relay -->
+      <!-- <div class="panel panel-primary info-pane">
+        <div class="panel-heading">
+          <h3 class="panel-title">Relay Information</h3>
+        </div>
+        <div class="panel-body">
+          <div class="row">
+            <div class="col-md-6">
+              <div class="alert alert-danger" role="alert">
+                This Relay should not be used in production situations.
+              </div>
+            </div>
+            <div class="col-md-6">
+
+            </div>
+          </div>
+        </div>
+      </div> -->
+      
       <request-pane></request-pane>
     </div>
 
     <!--  app styles-->
     <style media="screen">
-      body {
-        padding-top: 10px; }
-
       div.info-pane {
-        width: 80%;
-        margin: auto; }
-
-      div.log-pane {
-        width: 80%;
-        margin: auto; }
+        width: 90%;
+        margin: 10px auto; }
 
       div.request-pane {
         width: 90%;
-        margin: auto; }
-        div.request-pane .request-type-select {
-          margin-bottom: 5px; }
-        div.request-pane .btn-group {
-          margin: auto;
-          width: 97%; }
+        margin: 10px auto; }
+
 
       table.table {
         width: 100%;
