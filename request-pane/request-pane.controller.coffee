@@ -5,7 +5,8 @@ class RequestPaneController
     # some names to play with
     first_names = ["Alice","Bob","Charlie","Chuck","Dave","Erin","Eve","Faith",
              "Frank","Mallory","Oscar","Peggy","Pat","Sam","Sally","Sybil",
-             "Trent","Trudy","Victor","Walter","Wendy"]
+             "Trent","Trudy","Victor","Walter","Wendy"].sort ->
+               .5 - Math.random()
     @names = []
     for i in [1..20]
       for name in first_names
@@ -23,6 +24,7 @@ class RequestPaneController
     # assume we'll need to add a mailbox to play with
     $scope.mailbox = {}
     $scope.addMailboxVisible = true
+    $scope.quantity = 3
 
     # mailbox commands
     $scope.messageCount = (mailbox)->
@@ -36,6 +38,7 @@ class RequestPaneController
           mailbox.messagesNonces = []
         for msg in mailbox.lastDownload
           unless mailbox.messagesNonces.indexOf(msg.nonce) != -1
+            console.log msg
             mailbox.messagesNonces.push msg.nonce
             mailbox.messages.push msg
 
@@ -50,9 +53,6 @@ class RequestPaneController
             mailbox.messagesNonces.splice(index, 1)
             mailbox.messages.splice(index, 1)
 
-        console.log "deleted messages.", messagesToDelete
-
-
     $scope.sendMessage = (mailbox, outgoing)=>
       RelayService.sendToVia(outgoing.recipient, mailbox, outgoing.message).then (data)->
         outgoing = {}
@@ -61,7 +61,6 @@ class RequestPaneController
       name = mailbox.identity
       RelayService.destroyMailbox(mailbox)
       localStorage.removeItem "#{@mailboxPrefix}.#{name}"
-
 
     # show the active mailbox messages
     $scope.selectMailbox = (mailbox)->
@@ -74,13 +73,14 @@ class RequestPaneController
 
     $scope.addMailboxes = (quantityToAdd)=>
       for i in [1..quantityToAdd]
-        $scope.addMailbox @names[1], seed: @names[1]
+        $scope.addMailbox @names[1]
         @names.splice 0,1
       quantityToAdd = 0
 
     # add any mailbox stored in localStorage
     for key in Object.keys localStorage
       $scope.addMailbox(localStorage.getItem(key)) if key.indexOf(@mailboxPrefix) == 0
+
 
 
 

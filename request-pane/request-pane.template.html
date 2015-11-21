@@ -67,10 +67,10 @@
                               </tr>
                             </thead>
                             <tr ng-repeat="message in activeMailbox.messages">
-                              <td class="col-md-2"><div class="overflow-box">{{message.fromTag}}</div></td>
+                              <td class="col-md-2"><div class="overflow-box" ng-click="selectText(e)">{{message.fromTag || message.from}}</div></td>
                               <td class="col-md-2"><div class="overflow-box">{{message.nonce}}</div></td>
-                              <td class="col-md-2"><div class="overflow-box">{{message.time * 1000 | date:'short'}}</div></td>
-                              <td class="col-md-3"><div class="overflow-wrap">{{message.msg}}</div></td>
+                              <td class="col-md-2"><div class="overflow-box" >{{message.time * 1000 | date:'short'}}</div></td>
+                              <td class="col-md-3"><div class="overflow-wrap">{{message.msg || message.data}}</div></td>
                               <td class="col-md-3">
                                 <button class="btn btn-mini btn-danger" ng-click="deleteMessages(activeMailbox, [message.nonce])">
                                   <i class="glyphicon glyphicon-remove" ></i> Delete
@@ -126,48 +126,46 @@
                       <h3 class="panel-title">Add Mailbox</h3>
                     </div>
                     <div class="panel-body">
-                      <form class="form">
-                        <div class="form-group">
-                          <label for="name" >Name</label>
-                          <input type="text" id="name" ng-model="newMailbox.name" placeholde`r="name" class="form-control">
-                        </div>
-                        <hr />
+                      <label for="name" >Name</label>
+                      <div class="input-group">
 
-                        <label>From Seed</label>
-                        <div class="input-group">
-                          <input
-                            type="text"
-                            id="seed"
-                            ng-model="newMailbox.seed"
-                            placeholder="seed"
-                            class="form-control">
-                          <span class="input-group-btn">
-                            <button class="btn btn-default pull-right" ng-click="addMailbox(newMailbox.name, {seed:newMailbox.seed})">Add</button>
-                          </span>
-                        </div>
+                        <input type="text" id="name" ng-model="newMailbox.name" placeholde`r="name" class="form-control">
+                        <span class="input-group-btn">
+                          <button class="btn btn-default pull-right" ng-click="addMailbox(newMailbox.name)">Add</button>
+                        </span>
+                      </div><br/>
+                      <label>From Seed</label>
+                      <div class="input-group">
+                        <input
+                          type="text"
+                          id="seed"
+                          ng-model="newMailbox.seed"
+                          placeholder="seed"
+                          class="form-control">
+                        <span class="input-group-btn">
+                          <button class="btn btn-default pull-right" ng-click="addMailbox(newMailbox.name, {seed:newMailbox.seed})">Add</button>
+                        </span>
+                      </div><br/>
 
-                        <label>From Secret</label>
-                        <div class="input-group">
-                          <input
-                            type="text"
-                            id="seed"
-                            ng-model="newMailbox.secret"
-                            placeholder="secret"
-                            class="form-control">
-                          <span class="input-group-btn">
-                            <button class="btn btn-default pull-right" ng-click="addMailbox(newMailbox.name, {secret:newMailbox.secret})">Add</button>
-                          </span>
-                        </div>
-                      </form>
+                      <label>From Secret</label>
+                      <div class="input-group">
+                        <input
+                          type="text"
+                          id="seed"
+                          ng-model="newMailbox.secret"
+                          placeholder="secret"
+                          class="form-control">
+                        <span class="input-group-btn">
+                          <button class="btn btn-default pull-right" ng-click="addMailbox(newMailbox.name, {secret:newMailbox.secret})">Add</button>
+                        </span>
+                      </div>
                       <hr />
                       <form class="form">
                         <div class="input-group">
                           <input
                             type="text"
                             class="form-control"
-                            ng-model="quantity"
-                            placeholder="6"
-                            default="6">
+                            ng-model="quantity">
                           <span class="input-group-btn">
                             <button
                               class="btn btn-default"
