@@ -1,5 +1,4 @@
 class RequestPaneController
-  mailboxes: {}
   mailboxPrefix: "_mailbox"
   constructor: (RelayService, $scope)->
     # some names to play with
