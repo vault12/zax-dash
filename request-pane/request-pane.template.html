@@ -10,7 +10,7 @@
 
           </div>
           <div class="panel-body">
-            <table class="table">
+            <table class="table" ng-hide="mailboxes | isEmpty">
               <thead>
                 <tr>
                   <th>Name</th>
@@ -46,7 +46,7 @@
               </tr>
             </table>
               <div class="row">
-                <div class="col-sm-8">
+                <div class="col-sm-8" ng-hide="mailboxes | isEmpty">
                   <div class="panel panel-info">
                     <div class="panel-heading">
                       <h3 class="panel-title" ng-hide="!activeMailbox">{{activeMailbox.messageCount || "???"}} messages for {{activeMailbox.identity}}</h3>
@@ -134,8 +134,8 @@
                           <button class="btn btn-default pull-right" ng-click="addMailbox(newMailbox.name)">Add</button>
                         </span>
                       </div><br/>
-                      <label>From Seed</label>
-                      <div class="input-group">
+                      <label ng-hide="!newMailbox.name">From Seed</label>
+                      <div class="input-group" ng-hide="!newMailbox.name">
                         <input
                           type="text"
                           id="seed"
@@ -147,8 +147,8 @@
                         </span>
                       </div><br/>
 
-                      <label>From Secret</label>
-                      <div class="input-group">
+                      <label ng-hide="!newMailbox.name">From Secret</label>
+                      <div class="input-group" ng-hide="!newMailbox.name">
                         <input
                           type="text"
                           id="seed"

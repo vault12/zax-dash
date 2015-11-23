@@ -9,16 +9,19 @@
 
     <!-- Bootstrap and themes -->
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootswatch/3.3.5/cyborg/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootswatch/3.3.5/yeti/bootstrap.min.css" rel="stylesheet">
     <!-- ### -->
 
   </head>
   <body>
     <div ng-app="app">
       <!-- uncomment the following section to provide information about your relay -->
-      <!-- <div class="panel panel-primary info-pane">
+      <!-- <div class="panel panel-primary info-pane" ng-hide="infoVisible">
         <div class="panel-heading">
-          <h3 class="panel-title">Relay Information</h3>
+          <h3 class="panel-title">Relay Information
+            <i class="glyphicon glyphicon-remove pull-right" ng-click="infoVisible = !infoVisible"></i>
+          </h3>
+
         </div>
         <div class="panel-body">
           <div class="row">

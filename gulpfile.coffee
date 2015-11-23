@@ -6,6 +6,8 @@ concat = require 'gulp-concat'
 clean = require 'gulp-clean'
 gutil = require 'gulp-util'
 merge = require 'merge-stream'
+browserSync = require('browser-sync').create()
+
 
 process.on 'uncaughtException', (err)->
   if not watching then throw err else gutil.log err.stack || err
@@ -35,7 +37,7 @@ conf =
 watching = false
 
 gulp.task 'coffee', ->
-  libs = gulp.src ['lib/glow/dist/theglow.min.js', 'node_modules/angular-utf8-base64/angular-utf8-base64.js']
+  libs = gulp.src ['lib/glow/dist/theglow.min.js']
   _coffee = gulp.src conf.coffee
     .pipe coffee().on 'error', (e)->
       _coffee.end()
@@ -43,6 +45,20 @@ gulp.task 'coffee', ->
   merge(libs,_coffee)
     .pipe concat 'app.js'
     .pipe gulp.dest conf.target
+
+gulp.task 'dist', ->
+  true
+
+gulp.task 'default', ['build'], ->
+  browserSync.init
+    server:
+      baseDir: '.'
+      index: 'index.html'
+    notify: false
+    online: true
+    minify: false
+    reloadOnRestart: true
+  gulp.watch conf.watch, ['watch']
 
 gulp.task 'watch', ['coffee'], ->
   watching = true
