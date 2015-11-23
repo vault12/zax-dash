@@ -26,12 +26,7 @@ class RelayService
     return unless mailboxName
     # make our mailboxes
     if options.secret
-      # secret = @CryptoService.nacl.crypto_box_keypair_from_raw_sk(atob(options.secret))
-      # console.log secret
-      # # console.log "b64", mailbox = new @CryptoService.Mailbox.fromSecKey(mailboxName, options.secret)
-      # # console.log "decode b64", mailbox = new @CryptoService.Mailbox.fromSecKey(mailboxName, secret)
-      # console.log "Code Array", mailbox = new @CryptoService.Mailbox.fromSecKey(secret, secret)
-      # console.log "Code Array", mailbox = new @CryptoService.Mailbox.fromSecKey(mailboxName, secret.toCodeArray())
+      mailbox = new @CryptoService.Mailbox.fromSecKey(mailboxName, options.secret.fromBase64())
     else if options.seed
       mailbox = new @CryptoService.Mailbox.fromSeed(options.seed, mailboxName)
     else
