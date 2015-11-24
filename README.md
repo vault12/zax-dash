@@ -1,17 +1,17 @@
-# Zax-dash
+# Zax-Dash
 
-Zax-dash is a simple [AngularJS](https://s3-us-west-1.amazonaws.com/vault12/zax_infogfx.jpg) single page app to interact with your Zax relay. Zax-Dash uses [Glow](https://github.com/vault12/glow) to provide user-friend access point to given relay internal mailboxes. We maintain live [Test Server](https://zax_test.vault12.com) that runs our latest build. For testing purposes expiration on that relay is set for 30 minutes. Zax-dash is implemented using the the [Glow](https://github.com/vault12/glow) library. You can read the full [techinical specification here](http://bit.ly/nacl_relay_spec). t
+Zax-Dash is a simple AngularJS single page app to interact with [Zax Relay](https://github.com/vault12/zax), a [NaCl-based Cryptographic Relay](https://s3-us-west-1.amazonaws.com/vault12/zax_infogfx.jpg). Zax-Dash uses the [Glow](https://github.com/vault12/glow) library to provide a user-friendly access point to given relay internal mailboxes. We maintain a live [Test Server](https://zax_test.vault12.com) that runs our latest build. For testing purposes expiration of any communication on that relay is set for 30 minutes. You can read the full [technical specification here](http://bit.ly/nacl_relay_spec).
 
 ## Dashboard
-The default Zax-dash deployment is included in the Zax repository and can be accessed '/public' (via `/public`). You do not need to clone this repository to have the dashboard functionality included on your zax server.
+The default Zax-Dash deployment is included in the Zax repository and can be accessed '/public' (via `/public`). You do not need to clone this repository to have the dashboard functionality included on your Zax server.
 
 ## Getting Started
 
 #### NodeJS
-In order to build and use Zax-dash from source, you need to have a relatively recent version of nodeJS installed.
+In order to build and use Zax-Dash from source, you need to have a relatively recent version of nodeJS installed.
 
 #### Installation
-In a terminal, navigate to the directory in which you'd like to install Zax-dash and type the following:
+In a terminal, navigate to the directory in which you'd like to install Zax-Dash and type the following:
 
 ```Shell
 # get the source
@@ -28,11 +28,9 @@ gulp dist
 gulp
 ```
 
-If the 'bundle install' command fails with a message for libxml2 or Nokogiri, see the [Troubleshooting](#troubleshooting) section.
-
 #### Running Zax
 
-To run Zax-dash locally (outside of a Zax instance) run this command:
+To run Zax-Dash locally (outside of a Zax instance) run this command:
 
 ```Shell
 gulp
