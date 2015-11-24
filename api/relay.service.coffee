@@ -22,23 +22,22 @@ class RelayService
       @_defer(=> mailbox.relay_delete(messagesToDelete))
 
   # mailbox wrapper
-  newMailbox: (mailboxName, options = {})=>
-    return unless mailboxName
+  newMailbox: (mailboxName = "", options = {})=>
     # make our mailboxes
     if options.secret
-      mailbox = new @CryptoService.Mailbox.fromSecKey(mailboxName, options.secret.fromBase64())
+      mailbox = new @CryptoService.Mailbox.fromSecKey("", options.secret.fromBase64())
     else if options.seed
-      mailbox = new @CryptoService.Mailbox.fromSeed(options.seed, mailboxName)
+      mailbox = new @CryptoService.Mailbox.fromSeed(options.seed)
     else
       mailbox = new @CryptoService.Mailbox(mailboxName)
 
     # share keys among mailboxes
     for name, mbx of @mailboxes
-      mbx.keyRing.addGuest(mailboxName, mailbox.getPubCommKey())
+      mbx.keyRing.addGuest(mailbox.identity, mailbox.getPubCommKey())
       mailbox.keyRing.addGuest(mbx.identity, mbx.getPubCommKey())
 
     # save the mailbox
-    @mailboxes[mailboxName] = mailbox
+    @mailboxes[mailbox.identity] = mailbox
 
   destroyMailbox: (mailbox)->
     for name, mbx of @mailboxes
@@ -60,7 +59,7 @@ class RelayService
 
   _newRelay: ->
     @relay = new @CryptoService.Relay(@host)
-    @relay.client_token_text = @_randomString()
+    @relay.client_token_text = "saltandpepperissaltandpepperis"#@_randomString()
 
   _concat: (arrays...)->
     concatArray = []

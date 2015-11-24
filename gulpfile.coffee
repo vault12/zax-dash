@@ -7,7 +7,8 @@ clean = require 'gulp-clean'
 gutil = require 'gulp-util'
 merge = require 'merge-stream'
 browserSync = require('browser-sync').create()
-
+useref = require 'gulp-useref'
+templateCache = require 'gulp-angular-templatecache'
 
 process.on 'uncaughtException', (err)->
   if not watching then throw err else gutil.log err.stack || err
@@ -22,8 +23,9 @@ conf =
     '!**/*.js'
   ]
   sass: '**/*.sass'
-  target: "./"
+  target: "./dist/"
   clean: [
+    './dist/*'
     'app.js'
     'styles.css'
   ]
@@ -46,13 +48,21 @@ gulp.task 'coffee', ->
     .pipe concat 'app.js'
     .pipe gulp.dest conf.target
 
-gulp.task 'dist', ->
-  true
+gulp.task 'useref', ->
+  gulp.src('*.html')
+  .pipe useref()
+  .pipe gulp.dest(conf.target)
+
+gulp.task 'templates', ->
+  gulp.src('**/*.template.html')
+    .pipe(templateCache(module: 'app'))
+    .pipe gulp.dest(conf.target)
+
 
 gulp.task 'default', ['build'], ->
   browserSync.init
     server:
-      baseDir: '.'
+      baseDir: 'dist'
       index: 'index.html'
     notify: false
     online: true
@@ -69,4 +79,4 @@ gulp.task 'clean', ->
   gulp.src conf.clean, read: false
     .pipe clean()
 
-gulp.task 'build', ['clean', 'coffee']
+gulp.task 'build', ['clean','templates','useref','coffee']

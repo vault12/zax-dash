@@ -67,8 +67,7 @@ class RequestPaneController
 
     # internals
     $scope.addMailbox = (name, options)=>
-      localStorage.setItem "#{@mailboxPrefix}.#{name}", name
-      RelayService.newMailbox(name, options)
+      localStorage.setItem "#{@mailboxPrefix}.#{name}", RelayService.newMailbox(name, options).identity
 
     $scope.addMailboxes = (quantityToAdd)=>
       for i in [1..quantityToAdd]
@@ -79,12 +78,6 @@ class RequestPaneController
     # add any mailbox stored in localStorage
     for key in Object.keys localStorage
       $scope.addMailbox(localStorage.getItem(key)) if key.indexOf(@mailboxPrefix) == 0
-
-
-
-
-
-
 
 angular
   .module 'app'
