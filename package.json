@@ -17,7 +17,7 @@
     "coffee-script": "^1.10.0",
     "js-nacl": "^0.6.0",
     "merge-stream": "^1.0.0",
-    "@vault12/theglow": "^1.0.2"
+    "@vault12/theglow": "^1.0.3"
   },
   "devDependencies": {
     "browser-sync": "^2.10.0",
