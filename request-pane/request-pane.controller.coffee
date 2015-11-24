@@ -77,7 +77,7 @@ class RequestPaneController
 
     # add any mailbox stored in localStorage
     for key in Object.keys localStorage
-      $scope.addMailbox(localStorage.getItem(key)) if key.indexOf(@mailboxPrefix) == 0
+      console.log "saving#{key}", $scope.addMailbox(localStorage.getItem(key)) if key.indexOf(@mailboxPrefix) == 0
 
 angular
   .module 'app'

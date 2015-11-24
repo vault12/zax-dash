@@ -25,11 +25,15 @@ class RelayService
   newMailbox: (mailboxName = "", options = {})=>
     # make our mailboxes
     if options.secret
-      mailbox = new @CryptoService.Mailbox.fromSecKey("", options.secret.fromBase64())
+      mailbox = new @CryptoService.Mailbox.fromSecKey(options.secret.fromBase64(),mailboxName)
+      console.log "created mailbox #{mailboxName}:#{options.secret} from secret"
     else if options.seed
-      mailbox = new @CryptoService.Mailbox.fromSeed(options.seed)
+      mailbox = new @CryptoService.Mailbox.fromSeed(options.seed, mailboxName)
+      console.log "created mailbox #{mailboxName}:#{options.seed} from seed"
     else
       mailbox = new @CryptoService.Mailbox(mailboxName)
+      console.log "created mailbox #{mailboxName} from scratch"
+
 
     # share keys among mailboxes
     for name, mbx of @mailboxes
@@ -37,7 +41,7 @@ class RelayService
       mailbox.keyRing.addGuest(mbx.identity, mbx.getPubCommKey())
 
     # save the mailbox
-    @mailboxes[mailbox.identity] = mailbox
+    @mailboxes[mailbox.identity] = mailbox if mailbox.identity
 
   destroyMailbox: (mailbox)->
     for name, mbx of @mailboxes

@@ -40,6 +40,21 @@
       this.Keys = this.glow.Keys;
       this.CryptoStorage = this.glow.CryptoStorage;
       this.CryptoStorage.startStorageSystem(new this.glow.SimpleStorageDriver(this.relayUrl()));
+      this.glow.Utils.setAjaxImpl(function(url, data) {
+        return $.ajax({
+          method: 'POST',
+          url: url,
+          headers: {
+            'Accept': 'text/plain',
+            'Content-Type': 'text/plain'
+          },
+          data: data,
+          responseType: 'text',
+          timeout: 2000
+        }).then(function(response) {
+          return response;
+        });
+      });
     }
 
     return CryptoService;
@@ -124,11 +139,14 @@
         options = {};
       }
       if (options.secret) {
-        mailbox = new this.CryptoService.Mailbox.fromSecKey("", options.secret.fromBase64());
+        mailbox = new this.CryptoService.Mailbox.fromSecKey(options.secret.fromBase64(), mailboxName);
+        console.log("created mailbox " + mailboxName + ":" + options.secret + " from secret");
       } else if (options.seed) {
-        mailbox = new this.CryptoService.Mailbox.fromSeed(options.seed);
+        mailbox = new this.CryptoService.Mailbox.fromSeed(options.seed, mailboxName);
+        console.log("created mailbox " + mailboxName + ":" + options.seed + " from seed");
       } else {
         mailbox = new this.CryptoService.Mailbox(mailboxName);
+        console.log("created mailbox " + mailboxName + " from scratch");
       }
       ref = this.mailboxes;
       for (name in ref) {
@@ -136,7 +154,9 @@
         mbx.keyRing.addGuest(mailbox.identity, mailbox.getPubCommKey());
         mailbox.keyRing.addGuest(mbx.identity, mbx.getPubCommKey());
       }
-      return this.mailboxes[mailbox.identity] = mailbox;
+      if (mailbox.identity) {
+        return this.mailboxes[mailbox.identity] = mailbox;
+      }
     };
 
     RelayService.prototype.destroyMailbox = function(mailbox) {
@@ -319,7 +339,7 @@
       for (l = 0, len1 = ref.length; l < len1; l++) {
         key = ref[l];
         if (key.indexOf(this.mailboxPrefix) === 0) {
-          $scope.addMailbox(localStorage.getItem(key));
+          console.log("saving" + key, $scope.addMailbox(localStorage.getItem(key)));
         }
       }
     }

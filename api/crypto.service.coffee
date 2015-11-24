@@ -7,7 +7,7 @@ class CryptoService
   relayUrl: ->
     org = @$window.location.origin
     test = 'https://zax_test.vault12.com'
-    return if org.includes 'localhost' then test else org 
+    return if org.includes 'localhost' then test else org
 
   constructor: (@$window)->
     @glow = @$window.glow
@@ -18,6 +18,20 @@ class CryptoService
     @Keys = @glow.Keys
     @CryptoStorage = @glow.CryptoStorage
     @CryptoStorage.startStorageSystem new @glow.SimpleStorageDriver(@relayUrl())
+
+    # set the ajax handler. to jQuery
+    @glow.Utils.setAjaxImpl (url, data)->
+      $.ajax
+        method: 'POST'
+        url: url
+        headers:
+          'Accept': 'text/plain'
+          'Content-Type': 'text/plain'
+        data: data
+        responseType: 'text'
+        timeout: 2000
+      .then (response)->
+        response
 
 angular
   .module 'app'
