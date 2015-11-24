@@ -170,8 +170,7 @@
     };
 
     RelayService.prototype._newRelay = function() {
-      this.relay = new this.CryptoService.Relay(this.host);
-      return this.relay.client_token_text = "saltandpepperissaltandpepperis";
+      return this.relay = new this.CryptoService.Relay(this.host);
     };
 
     RelayService.prototype._concat = function() {

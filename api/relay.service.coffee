@@ -59,7 +59,7 @@ class RelayService
 
   _newRelay: ->
     @relay = new @CryptoService.Relay(@host)
-    @relay.client_token_text = "saltandpepperissaltandpepperis"#@_randomString()
+    # @relay.client_token_text = @_randomString()
 
   _concat: (arrays...)->
     concatArray = []
