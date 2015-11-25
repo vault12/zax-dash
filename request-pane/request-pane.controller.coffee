@@ -54,7 +54,7 @@ class RequestPaneController
 
     $scope.sendMessage = (mailbox, outgoing)=>
       RelayService.sendToVia(outgoing.recipient, mailbox, outgoing.message).then (data)->
-        outgoing = {}
+        $scope.outgoing = {message: "", recipient: ""}
 
     $scope.deleteMailbox = (mailbox)=>
       name = mailbox.identity
@@ -67,13 +67,18 @@ class RequestPaneController
 
     # internals
     $scope.addMailbox = (name, options)=>
-      localStorage.setItem "#{@mailboxPrefix}.#{name}", RelayService.newMailbox(name, options).identity
+      if localStorage.setItem "#{@mailboxPrefix}.#{name}", RelayService.newMailbox(name, options).identity
+        $scope.newMailbox = {name: "", options: null}
 
     $scope.addMailboxes = (quantityToAdd)=>
       for i in [1..quantityToAdd]
         $scope.addMailbox @names[1]
         @names.splice 0,1
       quantityToAdd = 0
+
+    $scope.addPublicKey = (mailbox, key)=>
+      if mailbox.keyRing.addGuest key.name, key.key
+        $scope.pubKey = {name: "", key: ""}
 
     # add any mailbox stored in localStorage
     for key in Object.keys localStorage

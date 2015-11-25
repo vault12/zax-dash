@@ -306,7 +306,10 @@
       $scope.sendMessage = (function(_this) {
         return function(mailbox, outgoing) {
           return RelayService.sendToVia(outgoing.recipient, mailbox, outgoing.message).then(function(data) {
-            return outgoing = {};
+            return $scope.outgoing = {
+              message: "",
+              recipient: ""
+            };
           });
         };
       })(this);
@@ -322,7 +325,12 @@
       };
       $scope.addMailbox = (function(_this) {
         return function(name, options) {
-          return localStorage.setItem(_this.mailboxPrefix + "." + name, RelayService.newMailbox(name, options).identity);
+          if (localStorage.setItem(_this.mailboxPrefix + "." + name, RelayService.newMailbox(name, options).identity)) {
+            return $scope.newMailbox = {
+              name: "",
+              options: null
+            };
+          }
         };
       })(this);
       $scope.addMailboxes = (function(_this) {
@@ -333,6 +341,16 @@
             _this.names.splice(0, 1);
           }
           return quantityToAdd = 0;
+        };
+      })(this);
+      $scope.addPublicKey = (function(_this) {
+        return function(mailbox, key) {
+          if (mailbox.keyRing.addGuest(key.name, key.key)) {
+            return $scope.pubKey = {
+              name: "",
+              key: ""
+            };
+          }
         };
       })(this);
       ref = Object.keys(localStorage);

@@ -117,6 +117,25 @@
                           </div>
                         </div>
                       </div>
+                      <div class="row">
+                        <div class="col-sm-12">
+                          <h3>Add Public Key</h3>
+                          <div class="input-group">
+                            <span class="input-group-btn">
+                              <input type="text" ng-model="pubKey.name" placeholder="Name" class="form-control">
+                            </span>
+                            <span class="input-group-btn">
+                              <input type="text" ng-model="pubKey.key" placeholder="Key" class="form-control">
+                            </span>
+                            <span class="input-group-btn">
+                              <button
+                                class="btn btn-success"
+                                type="button"
+                                ng-click="addPublicKey(activeMailbox, pubKey)">Add</button>
+                            </span>
+                          </div>
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -129,7 +148,7 @@
                       <label for="name" >Name</label>
                       <div class="input-group">
 
-                        <input type="text" id="name" ng-model="newMailbox.name" placeholde`r="name" class="form-control">
+                        <input type="text" id="name" ng-model="newMailbox.name" placeholder="name" class="form-control">
                         <span class="input-group-btn">
                           <button class="btn btn-default pull-right" ng-click="addMailbox(newMailbox.name)">Add</button>
                         </span>
