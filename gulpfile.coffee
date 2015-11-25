@@ -18,7 +18,6 @@ conf =
     '**/*.coffee'
     '*.coffee'
     '!gulpfile.coffee'
-    '!lib/glow/**'
     '!node_modules/**/*.coffee'
     '!**/*.js'
   ]
@@ -39,12 +38,10 @@ conf =
 watching = false
 
 gulp.task 'coffee', ->
-  libs = gulp.src ['lib/glow/dist/theglow.min.js']
   _coffee = gulp.src conf.coffee
     .pipe coffee().on 'error', (e)->
       _coffee.end()
       if not watching then throw e else gutil.log e.stack || e
-  merge(libs,_coffee)
     .pipe concat 'app.js'
     .pipe gulp.dest conf.target
 
@@ -62,11 +59,12 @@ gulp.task 'templates', ->
 gulp.task 'default', ['build'], ->
   browserSync.init
     server:
-      baseDir: 'dist'
-      index: 'index.html'
+      baseDir: '.'
+      index: 'dist/index.html'
     notify: false
     online: true
     minify: false
+    ghostMode: false
     reloadOnRestart: true
   gulp.watch conf.watch, ['watch']
 
