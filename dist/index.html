@@ -15,19 +15,20 @@
   </head>
   <body>
     <div ng-app="app">
-      <!-- uncomment the following section to provide information about your relay -->
-      <!-- <div class="panel panel-primary info-pane" ng-hide="infoVisible">
+      <!-- Us this section to provide information about your relay -->
+      <div class="panel panel-primary info-pane" ng-hide="infoVisible">
         <div class="panel-heading">
-          <h3 class="panel-title">Relay Information
+          <h3 class="panel-title">INFO: This is <i>'Zax Test'</i> instance at <b>https://zax_test.vault12.com</b>
             <i class="glyphicon glyphicon-remove pull-right" ng-click="infoVisible = !infoVisible"></i>
           </h3>
-
         </div>
         <div class="panel-body">
           <div class="row">
             <div class="col-md-6">
+              <img src="https://s3-us-west-1.amazonaws.com/vault12/vault12_clean.jpg" align="left" style="width: 88px; margin: 5px" /> <b>Welcome!</b> This node runs latest development version of <a href="https://github.com/vault12/zax" target="_blank">Zax</a>. Zax is a <a href="https://s3-us-west-1.amazonaws.com/vault12/zax_infogfx.jpg" target="_blank">NaCl-based Cryptographic Relay</a>. You can read the full <a href="http://bit.ly/nacl_relay_spec" target="_blank">technical specification here</a>. The page you are currently at is a <a href="https://github.com/vault12/zax-dash" target="_blank">standalone application</a>, design to provide user-friendly access to this Zax instance. It is bundled with Zax source in the <pre>/public</pre> directory. If you have any questions how to use Zax cryptography stack, please <a href="https://slack.vault12.com/" target="_blank">join our Slack community</a>.
+              <hr>
               <div class="alert alert-danger" role="alert">
-                This Relay should not be used in production situations.
+                This Relay should <u>not be used</u> in production situations. We often deploy new versions of this node on moments notice. For testing purposes <pre>relay.mailbox_timeout</pre> is set for 30 minutes.
               </div>
             </div>
             <div class="col-md-6">
@@ -35,13 +36,20 @@
             </div>
           </div>
         </div>
-      </div> -->
-
+      </div>
       <request-pane></request-pane>
     </div>
 
     <!--  app styles-->
     <style media="screen">
+      body {
+        font-size: 16px
+      }
+
+      div.alert {
+        font-size: 16px
+      }
+
       div.info-pane {
         width: 90%;
         margin: 10px auto; }
@@ -76,10 +84,24 @@
         z-index: 1000;
         position: relative;
         padding: auto}
+
+        pre {
+          display: inline;
+          padding: 2px;
+          font-size: 14px;
+          color: #333;
+          background-color: #f5f5f5;
+          border: 1px solid #CCC;
+          border-radius: 3px;
+          line-height: normal;
+          word-break: normal;
+          word-wrap: normal;
+        }
     </style>
     <!--  Javascript sources. -->
     <!--  Local/Crypto Libs-->
-    <script src="deps.js"></script>
+    <script src="node_modules/js-nacl/lib/nacl_factory.js"></script>
+    <script src="node_modules/theglow/lib/theglow.js"></script>
 
     <!--  angularjs-->
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.5/angular.min.js"></script>
@@ -89,8 +111,8 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
 
     <!--  include our app code last-->
-    <script type="text/javascript" src="app.js"></script>
-    <script type="text/javascript" src="templates.js">
+    <script type="text/javascript" src="dist/app.js"></script>
+    <script type="text/javascript" src="dist/templates.js">
 
     </script>
   </body>
