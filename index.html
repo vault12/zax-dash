@@ -15,20 +15,27 @@
   </head>
   <body>
     <div ng-app="app">
-      <!-- Us this section to provide information about your relay -->
+      <!-- Use this section to provide information about your relay -->
       <div class="panel panel-primary info-pane" ng-hide="infoVisible">
         <div class="panel-heading">
-          <h3 class="panel-title">INFO: This is <i>'Zax Test'</i> instance at <b>https://zax_test.vault12.com</b>
+          <h3 class="panel-title">INFO: This is a <i>'Zax Test'</i> instance at <b>https://zax_test.vault12.com</b>
             <i class="glyphicon glyphicon-remove pull-right" ng-click="infoVisible = !infoVisible"></i>
           </h3>
         </div>
         <div class="panel-body">
           <div class="row">
             <div class="col-md-6">
-              <img src="https://s3-us-west-1.amazonaws.com/vault12/vault12_clean.jpg" align="left" style="width: 88px; margin: 5px" /> <b>Welcome!</b> This node runs latest development version of <a href="https://github.com/vault12/zax" target="_blank">Zax</a>. Zax is a <a href="https://s3-us-west-1.amazonaws.com/vault12/zax_infogfx.jpg" target="_blank">NaCl-based Cryptographic Relay</a>. You can read the full <a href="http://bit.ly/nacl_relay_spec" target="_blank">technical specification here</a>. The page you are currently at is a <a href="https://github.com/vault12/zax-dash" target="_blank">standalone application</a>, design to provide user-friendly access to this Zax instance. It is bundled with Zax source in the <pre>/public</pre> directory. If you have any questions how to use Zax cryptography stack, please <a href="https://slack.vault12.com/" target="_blank">join our Slack community</a>.
+              <img src="https://s3-us-west-1.amazonaws.com/vault12/vault12_clean.jpg" align="left" style="width: 88px; margin: 5px" />
+              <b>Welcome!</b> This node runs the latest development version of <a href="https://github.com/vault12/zax" target="_blank">Zax</a>.
+              Zax is a <a href="https://s3-us-west-1.amazonaws.com/vault12/zax_infogfx.jpg" target="_blank">NaCl-based Cryptographic Relay</a>.
+              You can read the full <a href="http://bit.ly/nacl_relay_spec" target="_blank">technical specification here</a>.
+              The page you are currently viewing is a <a href="https://github.com/vault12/zax-dash" target="_blank">standalone application</a>, designed to provide user-friendly access to this Zax instance.
+              It is bundled with the Zax source in the <pre>/public</pre> directory.
+              If you have any questions on how to use the Zax cryptography stack, please <a href="https://slack.vault12.com/" target="_blank">join our Slack community</a>.
               <hr>
               <div class="alert alert-danger" role="alert">
-                This Relay should <u>not be used</u> in production situations. We often deploy new versions of this node on moments notice. For testing purposes <pre>relay.mailbox_timeout</pre> is set for 30 minutes.
+                This Relay should <u>not be used</u> in production situations. We often deploy new versions of this node without notice.
+                For testing purposes, <pre>relay.mailbox_timeout</pre> is set for 30 minutes.
               </div>
             </div>
             <div class="col-md-6">
