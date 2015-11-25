@@ -35,6 +35,11 @@ conf =
     '**/*.sass'
     '**/*.html'
   ]
+  copy: [
+    'node_modules/theglow/lib/theglow.js'
+    'node_modules/theglow/lib/theglow.js.map'
+    'node_modules/js-nacl/lib/nacl_factory.js'
+  ]
 
 watching = false
 
@@ -76,8 +81,12 @@ gulp.task 'watch', ['coffee'], ->
   watch conf.watch, ->
     gulp.start "build"
 
+gulp.task 'copy', ->
+  gulp.src conf.copy
+  .pipe gulp.dest(conf.target)
+
 gulp.task 'clean', ->
   gulp.src conf.clean, read: false
     .pipe clean()
 
-gulp.task 'build', ['clean','templates','useref','coffee']
+gulp.task 'build', ['clean','templates','useref','coffee', 'copy']
