@@ -8,6 +8,7 @@ gutil = require 'gulp-util'
 merge = require 'merge-stream'
 browserSync = require('browser-sync').create()
 useref = require 'gulp-useref'
+sourcemaps  = require 'gulp-sourcemaps'
 templateCache = require 'gulp-angular-templatecache'
 
 process.on 'uncaughtException', (err)->
@@ -39,10 +40,12 @@ watching = false
 
 gulp.task 'coffee', ->
   _coffee = gulp.src conf.coffee
+    .pipe(sourcemaps.init({loadMaps: true}))
     .pipe coffee().on 'error', (e)->
       _coffee.end()
       if not watching then throw e else gutil.log e.stack || e
     .pipe concat 'app.js'
+    .pipe(sourcemaps.write('./'))
     .pipe gulp.dest conf.target
 
 gulp.task 'useref', ->
