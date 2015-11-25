@@ -76,10 +76,9 @@ gulp.task 'default', ['build'], ->
     reloadOnRestart: true
   gulp.watch conf.watch, ['watch']
 
-gulp.task 'watch', ['coffee'], ->
+gulp.task 'watch', ['build'], ->
   watching = true
-  watch conf.watch, ->
-    gulp.start "build"
+  browserSync.reload()
 
 gulp.task 'copy', ->
   gulp.src conf.copy
