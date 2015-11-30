@@ -1,0 +1,40 @@
+{
+  "name": "zax-info",
+  "version": "1.0.0",
+  "description": "Information tool for ZAX relay",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/vault12/zax-dash.git"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "gulp"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "angular": "^1.4.7",
+    "angular-route": "^1.4.7",
+    "angular-utf8-base64": "0.0.2",
+    "bootstrap": "^3.3.5",
+    "coffee-script": "^1.10.0",
+    "js-nacl": "^0.6.0",
+    "merge-stream": "^1.0.0",
+    "theglow": "^1.0.5"
+  },
+  "devDependencies": {
+    "browser-sync": "^2.10.0",
+    "del": "^2.1.0",
+    "gulp": "^3.9.0",
+    "gulp-angular-templatecache": "^1.8.0",
+    "gulp-coffee": "^2.3.1",
+    "gulp-concat": "^2.6.0",
+    "gulp-sass": "^2.0.4",
+    "gulp-sourcemaps": "^1.6.0",
+    "gulp-uglify": "^1.5.1",
+    "gulp-useref": "^3.0.3",
+    "gulp-util": "^3.0.6",
+    "gulp-watch": "^4.3.5",
+    "vinyl-paths": "^2.1.0"
+  }
+}
