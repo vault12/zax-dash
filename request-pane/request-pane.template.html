@@ -105,7 +105,7 @@
                             <span class="input-group-btn">
                               <select type="text" ng-model="outgoing.recipient" class="form-control">
                                 <option value="" disabled selected>recipient</option>
-                                <option ng-repeat="(guest, pubKey) in activeMailbox.keyRing.guest_keys" value="{{pubKey}}">{{guest}}</option>
+                                <option ng-repeat="(guest, pubKey) in activeMailbox.keyRing.guest_keys" value="{{guest}}">{{guest}}</option>
                               </select>
                             </span>
                             <span class="input-group-btn">
