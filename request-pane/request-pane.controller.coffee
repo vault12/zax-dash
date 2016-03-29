@@ -38,22 +38,25 @@ class RequestPaneController
         if !mailbox.messages
           mailbox.messages = []
           mailbox.messagesNonces = []
-        for msg in mailbox.lastDownload
+        for msg in data
           unless mailbox.messagesNonces.indexOf(msg.nonce) != -1
             console.log "incoming message:", msg
             mailbox.messagesNonces.push msg.nonce
             mailbox.messages.push msg
+        $scope.$apply()
 
-    $scope.deleteMessages = (mailbox, messagesToDelete = [])->
-      RelayService.deleteMessages(mailbox, messagesToDelete).then ->
-        if messagesToDelete.length == 0
+    $scope.deleteMessages = (mailbox, messagesToDelete = null)->
+      noncesToDelete = messagesToDelete or mailbox.messagesNonces or []
+      RelayService.deleteMessages(mailbox, noncesToDelete).then ->
+        if noncesToDelete.length == 0
           mailbox.messages = []
           mailbox.messagesNonces = []
         else
-          for msg in messagesToDelete
+          for msg in noncesToDelete
             index = mailbox.messagesNonces.indexOf(msg)
             mailbox.messagesNonces.splice(index, 1)
             mailbox.messages.splice(index, 1)
+        $scope.$apply()
 
     $scope.sendMessage = (mailbox, outgoing)=>
       RelayService.sendToVia(outgoing.recipient, mailbox, outgoing.message).then (data)->
@@ -62,8 +65,8 @@ class RequestPaneController
 
     $scope.deleteMailbox = (mailbox)=>
       name = mailbox.identity
-      RelayService.destroyMailbox(mailbox)
-      localStorage.removeItem "#{@mailboxPrefix}.#{name}"
+      RelayService.destroyMailbox(mailbox).then =>
+        localStorage.removeItem "#{@mailboxPrefix}.#{name}"
 
     # show the active mailbox messages
     $scope.selectMailbox = (mailbox)->
@@ -71,8 +74,9 @@ class RequestPaneController
 
     # internals
     $scope.addMailbox = (name, options)=>
-      if localStorage.setItem "#{@mailboxPrefix}.#{name}", RelayService.newMailbox(name, options).identity
-        $scope.newMailbox = {name: "", options: null}
+      RelayService.newMailbox(name, options).then (mailbox)=>
+        localStorage.setItem "#{@mailboxPrefix}.#{name}", mailbox.identity
+        $scope.newMailbox = mailbox # {name: "", options: null}
 
     $scope.addMailboxes = (quantityToAdd)=>
       for i in [1..quantityToAdd]

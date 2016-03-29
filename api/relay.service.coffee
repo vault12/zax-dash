@@ -9,54 +9,58 @@ class RelayService
 
   # relay commands
   messageCount: (mailbox)->
-    @_defer(=> mailbox.connectToRelay(@relay)).then =>
-      @_defer(=> mailbox.relayCount())
+    mailbox.connectToRelay(@relay).then =>
+      mailbox.relayCount()
 
   getMessages: (mailbox)->
-    @_defer(=> mailbox.getRelayMessages(@relay))
+    mailbox.getRelayMessages(@relay)
 
-  deleteMessages: (mailbox, messagesToDelete = null)->
-    if !messagesToDelete
-      messagesToDelete = mailbox.relayNonceList()
-    @_defer(=> mailbox.connectToRelay(@relay)).then =>
-      @_defer(=> mailbox.relayDelete(messagesToDelete))
+  deleteMessages: (mailbox, noncesToDelete)->
+    mailbox.connectToRelay(@relay).then =>
+      mailbox.relayDelete(noncesToDelete, @relay)
 
   # mailbox wrapper
-  newMailbox: (mailboxName = "", options = {})=>
+  newMailbox: (mailboxName, options = {})=>
     # make our mailboxes
     if options.secret
-      mailbox = new @CryptoService.Mailbox.fromSecKey(options.secret.fromBase64(),mailboxName)
-      console.log "created mailbox #{mailboxName}:#{options.secret} from secret"
+      mailboxName = @_randomString() if not mailboxName
+      next = @CryptoService.Mailbox.fromSecKey(options.secret.fromBase64(), mailboxName).then (mailbox)=>
+        console.log "created mailbox #{mailboxName}:#{options.secret} from secret"
+        mailbox
     else if options.seed
-      mailbox = new @CryptoService.Mailbox.fromSeed(options.seed, mailboxName)
-      console.log "created mailbox #{mailboxName}:#{options.seed} from seed"
+      next = @CryptoService.Mailbox.fromSeed(options.seed, mailboxName).then (mailbox)=>
+        console.log "created mailbox #{mailboxName}:#{options.seed} from seed"
+        mailbox
     else
-      mailbox = new @CryptoService.Mailbox(mailboxName)
-      console.log "created mailbox #{mailboxName} from scratch"
+      next = @CryptoService.Mailbox.new(mailboxName).then (mailbox)=>
+        console.log "created mailbox #{mailboxName} from scratch"
+        mailbox
 
+    next.then (mailbox)=>
+      # share keys among mailboxes
+      tasks = []
+      for name, mbx of @mailboxes
+        tasks.push mbx.keyRing.addGuest(mailbox.identity, mailbox.getPubCommKey()).then =>
+          mailbox.keyRing.addGuest(mbx.identity, mbx.getPubCommKey())
 
-    # share keys among mailboxes
-    for name, mbx of @mailboxes
-      mbx.keyRing.addGuest(mailbox.identity, mailbox.getPubCommKey())
-      mailbox.keyRing.addGuest(mbx.identity, mbx.getPubCommKey())
-
-    # save the mailbox
-    @mailboxes[mailbox.identity] = mailbox if mailbox.identity
+      @$q.all(tasks).then =>
+        # save the mailbox
+        @mailboxes[mailbox.identity] = mailbox
+        mailbox
 
   destroyMailbox: (mailbox)->
+    tasks = []
     for name, mbx of @mailboxes
       if mailbox.keyRing.storage.root == mbx.keyRing.storage.root
-        mailbox.selfDestruct(true)
-        delete @mailboxes[name]
+        ((mailbox, name)=>
+          tasks.push mailbox.selfDestruct(true).then =>
+            console.log 'deleting ' + name
+            delete @mailboxes[name]
+        )(mailbox, name)
+    @$q.all(tasks)
 
   sendToVia: (recipient, mailbox, message)->
-    @_defer(=> mailbox.sendToVia(recipient, @relay, message))
-
-  # shortcut for converting .done to promise
-  _defer: (fnToDefer)->
-    deffered = @$q.defer()
-    deffered.resolve fnToDefer()
-    deffered.promise
+    mailbox.sendToVia(recipient, @relay, message)
 
   _newRelay: ->
     @relay = new @CryptoService.Relay(@host)

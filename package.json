@@ -19,7 +19,6 @@
     "bootstrap": "^3.3.5",
     "coffee-script": "^1.10.0",
     "js-nacl": "^0.6.0",
-    "merge-stream": "^1.0.0",
     "theglow": "^2.0.1"
   },
   "devDependencies": {
@@ -35,6 +34,7 @@
     "gulp-useref": "^3.0.3",
     "gulp-util": "^3.0.6",
     "gulp-watch": "^4.3.5",
+    "merge-stream": "^1.0.0",
     "vinyl-paths": "^2.1.0"
   }
 }

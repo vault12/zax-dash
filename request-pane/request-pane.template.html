@@ -155,7 +155,7 @@
                         </span>
                       </div><br/>
                       <label ng-hide="!newMailbox.name">From Seed</label>
-                      <div class="input-group">
+                      <div ng-hide="!newMailbox.name" class="input-group">
                         <input
                           type="text"
                           id="seed"
@@ -168,7 +168,7 @@
                       </div><br/>
 
                       <label ng-hide="!newMailbox.name">From Secret</label>
-                      <div class="input-group">
+                      <div ng-hide="!newMailbox.name" class="input-group">
                         <input
                           type="text"
                           id="seed"
