@@ -10,7 +10,9 @@ class RelayService
   # relay commands
   messageCount: (mailbox)->
     mailbox.connectToRelay(@relay).then =>
-      mailbox.relayCount()
+      mailbox.relayCount(@relay).then (count)=>
+        mailbox.messageCount = count
+        count
 
   getMessages: (mailbox)->
     mailbox.getRelayMessages(@relay)
@@ -37,16 +39,17 @@ class RelayService
         mailbox
 
     next.then (mailbox)=>
-      # share keys among mailboxes
-      tasks = []
-      for name, mbx of @mailboxes
-        tasks.push mbx.keyRing.addGuest(mailbox.identity, mailbox.getPubCommKey()).then =>
-          mailbox.keyRing.addGuest(mbx.identity, mbx.getPubCommKey())
+      @messageCount(mailbox).then =>
+        # share keys among mailboxes
+        tasks = []
+        for name, mbx of @mailboxes
+          tasks.push mbx.keyRing.addGuest(mailbox.identity, mailbox.getPubCommKey()).then =>
+            mailbox.keyRing.addGuest(mbx.identity, mbx.getPubCommKey())
 
-      @$q.all(tasks).then =>
-        # save the mailbox
-        @mailboxes[mailbox.identity] = mailbox
-        mailbox
+        @$q.all(tasks).then =>
+          # save the mailbox
+          @mailboxes[mailbox.identity] = mailbox
+          mailbox
 
   destroyMailbox: (mailbox)->
     tasks = []

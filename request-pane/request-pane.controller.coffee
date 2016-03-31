@@ -1,6 +1,6 @@
 class RequestPaneController
   mailboxPrefix: "_mailbox"
-  constructor: (RelayService, $scope)->
+  constructor: (RelayService, $scope, $q)->
     # hide notification divs
     $('#key-confirmation').hide()
     $('#send-confirmation').hide()
@@ -30,8 +30,8 @@ class RequestPaneController
 
     # mailbox commands
     $scope.messageCount = (mailbox)->
-      RelayService.messageCount(mailbox).then (data)->
-        mailbox.messageCount = "#{$scope.relay.result}"
+      RelayService.messageCount(mailbox).then ->
+        $scope.$apply()
 
     $scope.getMessages = (mailbox)->
       RelayService.getMessages(mailbox).then (data)->
@@ -90,13 +90,19 @@ class RequestPaneController
         $scope.pubKey = {name: "", key: ""}
 
     # add any mailbox stored in localStorage
+    next = $q.all()
     for key in Object.keys localStorage
-      $scope.addMailbox(localStorage.getItem(key)) if key.indexOf(@mailboxPrefix) == 0
+      if key.indexOf(@mailboxPrefix) == 0
+        ((key)->
+          next = next.then -> $scope.addMailbox(localStorage.getItem(key))
+        )(key)
+    next
 
 angular
   .module 'app'
   .controller 'RequestPaneController', [
-    "RelayService"
-    "$scope"
+    'RelayService'
+    '$scope'
+    '$q'
     RequestPaneController
   ]
