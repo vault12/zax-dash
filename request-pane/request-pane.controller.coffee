@@ -79,10 +79,7 @@ class RequestPaneController
         $scope.newMailbox = mailbox # {name: "", options: null}
 
     $scope.addMailboxes = (quantityToAdd)=>
-      for i in [1..quantityToAdd]
-        $scope.addMailbox @names[1]
-        @names.splice 0,1
-      quantityToAdd = 0
+      [1..quantityToAdd].reduce ((prev, i)=> prev.then => $scope.addMailbox @names.shift()), $q.all()
 
     $scope.addPublicKey = (mailbox, key)=>
       if mailbox.keyRing.addGuest key.name, key.key

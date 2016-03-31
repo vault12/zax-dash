@@ -24,6 +24,7 @@ class RelayService
   # mailbox wrapper
   newMailbox: (mailboxName, options = {})=>
     # make our mailboxes
+    next = null
     if options.secret
       mailboxName = @_randomString() if not mailboxName
       next = @CryptoService.Mailbox.fromSecKey(options.secret.fromBase64(), mailboxName).then (mailbox)=>
@@ -43,8 +44,10 @@ class RelayService
         # share keys among mailboxes
         tasks = []
         for name, mbx of @mailboxes
-          tasks.push mbx.keyRing.addGuest(mailbox.identity, mailbox.getPubCommKey()).then =>
-            mailbox.keyRing.addGuest(mbx.identity, mbx.getPubCommKey())
+          ((name, mbx)=>
+            tasks.push mbx.keyRing.addGuest(mailbox.identity, mailbox.getPubCommKey()).then =>
+              mailbox.keyRing.addGuest(mbx.identity, mbx.getPubCommKey())
+          )(name, mbx)
 
         @$q.all(tasks).then =>
           # save the mailbox
