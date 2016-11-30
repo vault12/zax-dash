@@ -37,8 +37,7 @@ conf =
     '**/*.html'
   ]
   copy: [
-    'node_modules/theglow/lib/theglow.js'
-    'node_modules/theglow/lib/theglow.js.map'
+    'node_modules/theglow/dist/theglow.js'
     'node_modules/js-nacl/lib/nacl_factory.js'
   ]
 
