@@ -80,10 +80,10 @@
       div.overflow-box:hover {
         overflow: visible;
         background: #fff;
-        margin: auto
+        margin: auto;
         font-size: 1.2em;
         width: 500px;
-        text-align: center
+        text-align: center;
         height: 30px;
         z-index: 1000;
         position: relative;
@@ -104,8 +104,8 @@
     </style>
     <!--  Javascript sources. -->
     <!--  Local/Crypto Libs-->
-    <script src="nacl_factory.js"></script>
-    <script src="theglow.js"></script>
+    <script src="node_modules/js-nacl/lib/nacl_factory.js"></script>
+    <script src="node_modules/theglow/lib/theglow.js"></script>
 
     <!--  angularjs-->
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.5/angular.min.js"></script>
@@ -115,9 +115,9 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
 
     <!--  include our app code last-->
-    <script type="text/javascript" src="app.js"></script>
-    <script type="text/javascript" src="templates.js"></script>
-    <script type="text/javascript">
+    <script src="build/app.js"></script>
+    <script src="build/templates.js"></script>
+    <script>
       $( document ).ready(function() {
         $('#hostblock').html(window.location.origin);
       });

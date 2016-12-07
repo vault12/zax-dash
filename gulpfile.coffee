@@ -1,11 +1,9 @@
 gulp = require 'gulp'
 watch = require 'gulp-watch'
 coffee = require 'gulp-coffee'
-sass = require 'gulp-sass'
 concat = require 'gulp-concat'
 del = require 'del'
 gutil = require 'gulp-util'
-merge = require 'merge-stream'
 browserSync = require('browser-sync').create()
 useref = require 'gulp-useref'
 sourcemaps  = require 'gulp-sourcemaps'
@@ -23,23 +21,11 @@ conf =
     '!node_modules/**/*.coffee'
     '!**/*.js'
   ]
-  sass: '**/*.sass'
-  target: "./dist/"
-  clean: [
-    'dist/*'
-    'app.js'
-    'styles.css'
-  ]
+  target: './build/'
+  clean: 'build/'
   watch: [
-    '!lib/glow/**'
     '**/*.coffee'
-    '**/*.sass'
     '**/*.html'
-  ]
-  copy: [
-    'node_modules/theglow/lib/theglow.js'
-    'node_modules/theglow/lib/theglow.js.map'
-    'node_modules/js-nacl/lib/nacl_factory.js'
   ]
 
 watching = false
@@ -68,7 +54,7 @@ gulp.task 'templates', ->
 gulp.task 'default', ['build'], ->
   browserSync.init
     server:
-      baseDir: './dist/'
+      baseDir: './'
       index: 'index.html'
     notify: false
     online: true
@@ -81,12 +67,8 @@ gulp.task 'watch', ['build'], ->
   watching = true
   browserSync.reload()
 
-gulp.task 'copy', ->
-  gulp.src conf.copy
-  .pipe gulp.dest(conf.target)
-
 gulp.task 'clean', ->
   gulp.src conf.clean
     .pipe vinyl del
 
-gulp.task 'build', ['clean','templates','useref', 'copy','coffee']
+gulp.task 'build', ['clean','templates','useref', 'coffee']
