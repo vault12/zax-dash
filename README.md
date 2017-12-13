@@ -1,9 +1,9 @@
 # Zax-Dash
 
-Zax-Dash is a simple AngularJS single page app to interact with [Zax Relay](https://github.com/vault12/zax), a [NaCl-based Cryptographic Relay](https://s3-us-west-1.amazonaws.com/vault12/zax_infogfx.jpg). Zax-Dash uses the [Glow](https://github.com/vault12/glow) library to provide a user-friendly access point to given relay internal mailboxes. We maintain a live [Test Server](https://z.vault12.com) that runs our latest build. For testing purposes expiration of any communication on that relay is set for 30 minutes. You can read the full [technical specification here](http://bit.ly/nacl_relay_spec).
+Zax-Dash is a simple AngularJS single page app to interact with [Zax Relay](https://github.com/vault12/zax), a [NaCl-based Cryptographic Relay](https://s3-us-west-1.amazonaws.com/vault12/zax_infogfx.jpg). Zax-Dash uses the [Glow](https://github.com/vault12/glow) library to provide a user-friendly access point to given relay internal mailboxes. We maintain a live [Test Server](https://zax-test.vault12.com) that runs our latest build. For testing purposes expiration of any communication on that relay is set for 30 minutes. You can read the full [technical specification here](http://bit.ly/nacl_relay_spec).
 
 ## Dashboard
-The default Zax-Dash deployment is included in the Zax repository and can be accessed '/public' (via `/public`). You do not need to clone this repository to have the dashboard functionality included on your Zax server.
+The default Zax-Dash deployment is included in the Zax repository and can be accessed via `/public`. You do not need to clone this repository to have the dashboard functionality included on your Zax server.
 
 ## Getting Started
 
