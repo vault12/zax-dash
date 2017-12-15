@@ -115,14 +115,13 @@
 
     <script src="node_modules/axios/dist/axios.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.5/angular.min.js"></script>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
 
     <!--  include our app code last-->
     <script src="build/app.js"></script>
     <script src="build/templates.js"></script>
     <script>
-      $( document ).ready(function() {
-        $('#hostblock').html(window.location.origin);
+      document.addEventListener("DOMContentLoaded", function() {
+        document.getElementById('hostblock').innerHTML = window.location.origin;
       });
     </script>
   </body>
