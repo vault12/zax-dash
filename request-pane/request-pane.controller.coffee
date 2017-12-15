@@ -41,6 +41,8 @@ class RequestPaneController
         for msg in data
           unless mailbox.messagesNonces.indexOf(msg.nonce) != -1
             console.log "incoming message:", msg
+            if msg.kind == 'file'
+              msg.data = 'FILE, uploadID: ' + JSON.parse(msg.data).uploadID
             mailbox.messagesNonces.push msg.nonce
             mailbox.messages.push msg
         $scope.$apply()
