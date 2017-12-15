@@ -7,7 +7,6 @@
             <h3 class="panel-title">
               Mailboxes
             </h3>
-
           </div>
           <div class="panel-body">
             <table class="table" ng-hide="mailboxes | isEmpty">
@@ -17,7 +16,6 @@
                   <th>Secret Key</th>
                   <th>Public Key</th>
                   <th>Message Count</th>
-                  <!-- <th>Message Actions</th> -->
                   <th>Mailbox Actions</th>
                 </tr>
               </thead>
@@ -97,7 +95,7 @@
                       </div>
                       <div class="row">
                         <div class="col-sm-12">
-                          <h3>Send Message &nbsp;<span class="badge" id="send-confirmation" >Message Sent!</span></h3>
+                          <h3>Send Message &nbsp;<span class="badge" ng-class="{'badge-show': messageSent}">Message Sent!</span></h3>
                           <div class="input-group">
                             <span class="input-group-btn">
                               <input type="text" ng-model="outgoing.message" placeholder="message" class="form-control">
@@ -113,14 +111,13 @@
                                 class="btn btn-success"
                                 type="button"
                                 ng-click="sendMessage(activeMailbox, outgoing)">Send</button>
-
                             </span>
                           </div>
                         </div>
                       </div>
                       <div class="row">
                         <div class="col-sm-12">
-                          <h3>Add Public Key &nbsp;<span class="badge" id="key-confirmation" >Key Added!</span></h3>
+                          <h3>Add Public Key &nbsp;<span class="badge" ng-class="{'badge-show': keyAdded}">Key Added!</span></h3>
                           <div class="input-group">
                             <span class="input-group-btn">
                               <input type="text" ng-model="pubKey.name" placeholder="Name" class="form-control">
@@ -148,7 +145,6 @@
                     <div class="panel-body">
                       <label for="name" >Name</label>
                       <div class="input-group">
-
                         <input type="text" id="name" ng-model="newMailbox.name" placeholder="name" class="form-control">
                         <span class="input-group-btn">
                           <button class="btn btn-default pull-right" ng-click="addMailbox(newMailbox.name)">Add</button>
@@ -166,7 +162,6 @@
                           <button class="btn btn-default pull-right" ng-click="addMailbox(newMailbox.name, {seed:newMailbox.seed})">Add</button>
                         </span>
                       </div><br/>
-
                       <label ng-hide="!newMailbox.name">From Secret</label>
                       <div ng-hide="!newMailbox.name" class="input-group">
                         <input
@@ -201,11 +196,8 @@
             </div>
           </div>
         </div>
-
       </div>
     </div>
     <!--  mailbox selector-->
-
-
   </div>
 </div>

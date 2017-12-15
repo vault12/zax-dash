@@ -1,9 +1,6 @@
 class RequestPaneController
   mailboxPrefix: "_mailbox"
-  constructor: (RelayService, $scope, $q)->
-    # hide notification divs
-    $('#key-confirmation').hide()
-    $('#send-confirmation').hide()
+  constructor: (RelayService, $scope, $q, $timeout)->
     # some names to play with
     first_names = ["Alice","Bob","Charlie","Chuck","Dave","Erin","Eve","Faith",
              "Frank","Mallory","Oscar","Peggy","Pat","Sam","Sally","Sybil",
@@ -16,7 +13,6 @@ class RequestPaneController
           @names.push "#{name}"
         else
           @names.push "#{name} #{i}"
-
 
     # what mailboxes are we looking at?
     $scope.mailboxes = RelayService.mailboxes
@@ -60,10 +56,15 @@ class RequestPaneController
             mailbox.messages.splice(index, 1)
         $scope.$apply()
 
-    $scope.sendMessage = (mailbox, outgoing)=>
+    $scope.sendMessage = (mailbox, outgoing)->
       RelayService.sendToVia(outgoing.recipient, mailbox, outgoing.message).then (data)->
-        $('#send-confirmation').show().fadeOut(3000)
+        $scope.messageSent = true
+        $timeout(->
+          $scope.messageSent = false
+          $scope.$apply()
+        , 3000)
         $scope.outgoing = {message: "", recipient: ""}
+        $scope.$apply()
 
     $scope.deleteMailbox = (mailbox)=>
       name = mailbox.identity
@@ -83,10 +84,15 @@ class RequestPaneController
     $scope.addMailboxes = (quantityToAdd)=>
       [1..quantityToAdd].reduce ((prev, i)=> prev.then => $scope.addMailbox @names.shift()), $q.all()
 
-    $scope.addPublicKey = (mailbox, key)=>
+    $scope.addPublicKey = (mailbox, key)->
       if mailbox.keyRing.addGuest key.name, key.key
-        $('#key-confirmation').show().fadeOut(3000)
+        $scope.keyAdded = true
+        $timeout(->
+          $scope.keyAdded = false
+          $scope.$apply()
+        , 3000)
         $scope.pubKey = {name: "", key: ""}
+        $scope.$apply()
 
     # add any mailbox stored in localStorage
     next = $q.all()
@@ -103,5 +109,6 @@ angular
     'RelayService'
     '$scope'
     '$q'
+    '$timeout'
     RequestPaneController
   ]
