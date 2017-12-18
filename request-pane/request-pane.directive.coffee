@@ -1,4 +1,4 @@
-requestPane = (RequestService, LoggerService, base64)->
+requestPane = ->
   directive =
     transclude: true
     restrict: 'E'

@@ -1,9 +1,8 @@
 class RelayService
   host: ""
-  headers: {"Content-Type": "text/plain"}
   mailboxes: {}
 
-  constructor: (@$http, @$q, @CryptoService, $location) ->
+  constructor: (@$q, @CryptoService) ->
     @host = @CryptoService.relayUrl()
     @_newRelay()
 
@@ -70,7 +69,6 @@ class RelayService
 
   _newRelay: ->
     @relay = new @CryptoService.Relay(@host)
-    # @relay.client_token_text = @_randomString()
 
   _concat: (arrays...)->
     concatArray = []
@@ -87,9 +85,7 @@ class RelayService
 angular
   .module 'app'
   .service 'RelayService', [
-    '$http'
     '$q'
     'CryptoService'
-    '$location'
     RelayService
   ]
