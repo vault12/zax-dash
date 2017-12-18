@@ -13,10 +13,10 @@ class CryptoService
     #
     # org = @$window.location.origin
     # # Configure your relay address. Likely 'http://localhost:8080' for local
-    # relay = 'https://z.vault12.com'
+    # relay = 'https://zax-test.vault12.com'
     # return if org.includes 'localhost' then relay else org
 
-  constructor: (@$window)->
+  constructor: ($http, @$window)->
     @glow = @$window.glow
     @nacl = @$window.nacl_factory.instantiate( -> )
     @Mailbox = @glow.MailBox
@@ -26,23 +26,22 @@ class CryptoService
     @CryptoStorage = @glow.CryptoStorage
     @CryptoStorage.startStorageSystem new @glow.SimpleStorageDriver(@relayUrl())
 
-    # use Axios library for Ajax implementation
     @glow.Utils.setAjaxImpl (url, data)->
-      axios
+      $http(
         url: url
-        method: 'post'
+        method: 'POST'
         headers:
           'Accept': 'text/plain'
           'Content-Type': 'text/plain'
         data: data
-        responseType: 'text'
         timeout: 2000
-      .then (response)->
+      ).then (response)->
         response.data
 
 angular
   .module 'app'
   .service 'CryptoService', [
+    '$http'
     '$window'
     CryptoService
   ]

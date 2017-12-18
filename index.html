@@ -5,9 +5,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Zax Relay Dashboard</title>
-
-    <!-- Bootstrap and themes -->
-    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css" rel="stylesheet">
+    <link href="node_modules/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
   </head>
   <body>
     <div ng-app="app">
@@ -109,14 +107,10 @@
         }
     </style>
 
-    <!--  Local/Crypto Libs-->
     <script src="node_modules/js-nacl/lib/nacl_factory.js"></script>
     <script src="node_modules/theglow/dist/theglow.min.js"></script>
+    <script src="node_modules/angular/angular.min.js"></script>
 
-    <script src="node_modules/axios/dist/axios.min.js"></script>
-    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.5/angular.min.js"></script>
-
-    <!--  include our app code last-->
     <script src="build/app.js"></script>
     <script src="build/templates.js"></script>
     <script>
