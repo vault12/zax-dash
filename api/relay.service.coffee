@@ -70,13 +70,6 @@ class RelayService
   _newRelay: ->
     @relay = new @CryptoService.Relay(@host)
 
-  _concat: (arrays...)->
-    concatArray = []
-    for array in arrays
-      for item in array
-        concatArray.push item
-    concatArray
-
   _randomString: (length=32) ->
     id = ""
     id += Math.random().toString(36).substr(2) while id.length < length
