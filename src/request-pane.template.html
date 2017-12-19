@@ -1,189 +1,178 @@
-<div class="request-pane">
-  <div class="request">
-    <div class="row">
-      <div class="col-sm-12">
-        <div class="panel panel-primary">
-          <div class="panel-heading">
-            <h3 class="panel-title">
-              Mailboxes
-            </h3>
-          </div>
-          <div class="panel-body">
-            <table class="table" ng-hide="mailboxes | isEmpty">
-              <thead>
-                <tr>
-                  <th>Name</th>
-                  <th>Secret Key</th>
-                  <th>Public Key</th>
-                  <th>Message Count</th>
-                  <th>Mailbox Actions</th>
-                </tr>
-              </thead>
-              <tr ng-repeat="mailbox in mailboxes" ng-click="selectMailbox(mailbox)" ng-class="{info: mailbox == activeMailbox}">
-                <td>{{mailbox.identity}}</td>
-                <td><div class="overflow-box">{{mailbox.keyRing.commKey.strSecKey()}}</div></td>
-                <td><div class="overflow-box">{{mailbox.keyRing.commKey.strPubKey()}}</div></td>
-                <td>
-                  <div class="input-group">
-                    <span class="input-group-btn">
-                      <button
-                        class="btn btn-default"
-                        type="button"
-                        ng-click="messageCount(mailbox)">Get</button>
-                    </span>
-                    <input
-                      type="text"
-                      class="form-control"
-                      ng-model="mailbox.messageCount"
-                      placeholder="???">
-                  </div>
-                </td>
-                <td>
-                  <button class="btn btn-default btn-danger" ng-click="deleteMailbox(mailbox)">Self Destruct</button>
-                </td>
+<div class="container">
+  <div class="row">
+    <div class="col-sm-12">
+      <div class="panel panel-primary">
+        <div class="panel-heading">
+          <h2>Mailboxes</h2>
+        </div>
+        <div class="panel-body">
+          <table class="table hover" ng-hide="mailboxes | isEmpty">
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Secret Key</th>
+                <th>Public Key</th>
+                <th>Message Count</th>
+                <th>Mailbox Actions</th>
               </tr>
-            </table>
-              <div class="row">
-                <div class="col-sm-8" ng-hide="mailboxes | isEmpty">
-                  <div class="panel panel-info">
-                    <div class="panel-heading">
-                      <h3 class="panel-title" ng-hide="!activeMailbox">{{activeMailbox.messageCount || "???"}} messages for <b>{{activeMailbox.identity}}</b></h3>
-                      <h3 class="panel-title" ng-hide="activeMailbox">select a mailbox</h3>
-                    </div>
-                    <div class="panel-body" ng-hide="!activeMailbox">
-                      <div class="row">
-                        <div class="col-sm-12">
-                          <h3>Messages</h3>
-                          <table class="table table-striped">
-                            <thead>
-                              <tr>
-                                <th class="col-md-2">from</th>
-                                <th class="col-md-2">nonce</th>
-                                <th class="col-md-2">time</th>
-                                <th class="col-md-3">message</th>
-                                <th class="col-md-3"></th>
-                              </tr>
-                            </thead>
-                            <tr ng-repeat="message in activeMailbox.messages">
-                              <td class="col-md-2"><div class="overflow-box" ng-click="selectText(e)">{{message.fromTag || message.from}}</div></td>
-                              <td class="col-md-2"><div class="overflow-box">{{message.nonce}}</div></td>
-                              <td class="col-md-2"><div class="overflow-box" >{{message.time * 1000 | date:'short'}}</div></td>
-                              <td class="col-md-3"><div class="overflow-wrap">{{message.msg || message.data}}</div></td>
-                              <td class="col-md-3">
-                                <button class="btn btn-mini btn-danger" ng-click="deleteMessages(activeMailbox, [message.nonce])">
-                                  <i class="glyphicon glyphicon-remove" ></i> Delete
-                                </button>
-                              </td>
+            </thead>
+            <tr ng-repeat="mailbox in mailboxes" ng-click="selectMailbox(mailbox)" ng-class="{info: mailbox == activeMailbox}">
+              <td>{{mailbox.identity}}</td>
+              <td><div class="overflow-box">{{mailbox.keyRing.commKey.strSecKey()}}</div></td>
+              <td><div class="overflow-box">{{mailbox.keyRing.commKey.strPubKey()}}</div></td>
+              <td>
+                <div class="input-group">
+                  <span class="input-group-btn">
+                    <button
+                      class="btn btn-default"
+                      type="button"
+                      ng-click="messageCount(mailbox)">Get</button>
+                  </span>
+                  <input
+                    type="text"
+                    class="form-control"
+                    ng-model="mailbox.messageCount"
+                    placeholder="???">
+                </div>
+              </td>
+              <td>
+                <button class="btn btn-default btn-danger" ng-click="deleteMailbox(mailbox)">Self Destruct</button>
+              </td>
+            </tr>
+          </table>
+            <div class="row">
+              <div class="col-sm-8" ng-hide="mailboxes | isEmpty">
+                <div class="panel panel-info">
+                  <div class="panel-heading">
+                    <h3 class="panel-title" ng-hide="!activeMailbox">{{activeMailbox.messageCount || "???"}} messages for <b>{{activeMailbox.identity}}</b></h3>
+                    <h3 class="panel-title" ng-hide="activeMailbox">select a mailbox</h3>
+                  </div>
+                  <div class="panel-body" ng-hide="!activeMailbox">
+                    <div class="row">
+                      <div class="col-sm-12">
+                        <h3>Messages</h3>
+                        <table class="table table-striped">
+                          <thead>
+                            <tr>
+                              <th class="col-md-2">from</th>
+                              <th class="col-md-2">nonce</th>
+                              <th class="col-md-2">time</th>
+                              <th class="col-md-3">message</th>
+                              <th class="col-md-3"></th>
                             </tr>
-                          </table>
+                          </thead>
+                          <tr ng-repeat="message in activeMailbox.messages">
+                            <td class="col-md-2"><div class="overflow-box" ng-click="selectText(e)">{{message.fromTag || message.from}}</div></td>
+                            <td class="col-md-2"><div class="overflow-box">{{message.nonce}}</div></td>
+                            <td class="col-md-2"><div class="overflow-box" >{{message.time * 1000 | date:'short'}}</div></td>
+                            <td class="col-md-3"><div class="overflow-wrap">{{message.msg || message.data}}</div></td>
+                            <td class="col-md-3">
+                              <button class="btn btn-mini btn-danger" ng-click="deleteMessages(activeMailbox, [message.nonce])">
+                                <i class="glyphicon glyphicon-remove" ></i> Delete
+                              </button>
+                            </td>
+                          </tr>
+                        </table>
+                        <div class="btn-group">
+                          <button
+                            class="btn btn-primary"
+                            type="button"
+                            ng-click="getMessages(activeMailbox)">Fetch All</button>
+                          <button
+                            class="btn btn-primary"
+                            type="button"
+                            ng-click="deleteMessages(activeMailbox)">Delete All</button>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="row">
+                      <div class="col-sm-12">
+                        <h3>Send Message &nbsp;<span class="badge" ng-class="{'badge-show': messageSent}">Message Sent!</span></h3>
+                        <div class="input-group">
+                          <span class="input-group-btn">
+                            <input type="text" ng-model="outgoing.message" placeholder="message" class="form-control">
+                          </span>
+                          <span class="input-group-btn">
+                            <select type="text" ng-model="outgoing.recipient" class="form-control">
+                              <option value="" disabled selected>recipient</option>
+                              <option ng-repeat="(guest, pubKey) in activeMailbox.keyRing.guestKeys" value="{{guest}}">{{guest}}</option>
+                            </select>
+                          </span>
                           <span class="input-group-btn">
                             <button
-                              class="btn btn-default"
+                              class="btn btn-success"
                               type="button"
-                              ng-click="getMessages(activeMailbox)">Fetch All</button>
-                            <button
-                              class="btn btn-default"
-                              type="button"
-                              ng-click="deleteMessages(activeMailbox)">Delete All</button>
+                              ng-click="sendMessage(activeMailbox, outgoing)">Send</button>
                           </span>
                         </div>
                       </div>
-                      <div class="row">
-                        <div class="col-sm-12">
-                          <h3>Send Message &nbsp;<span class="badge" ng-class="{'badge-show': messageSent}">Message Sent!</span></h3>
-                          <div class="input-group">
-                            <span class="input-group-btn">
-                              <input type="text" ng-model="outgoing.message" placeholder="message" class="form-control">
-                            </span>
-                            <span class="input-group-btn">
-                              <select type="text" ng-model="outgoing.recipient" class="form-control">
-                                <option value="" disabled selected>recipient</option>
-                                <option ng-repeat="(guest, pubKey) in activeMailbox.keyRing.guestKeys" value="{{guest}}">{{guest}}</option>
-                              </select>
-                            </span>
-                            <span class="input-group-btn">
-                              <button
-                                class="btn btn-success"
-                                type="button"
-                                ng-click="sendMessage(activeMailbox, outgoing)">Send</button>
-                            </span>
-                          </div>
-                        </div>
-                      </div>
-                      <div class="row">
-                        <div class="col-sm-12">
-                          <h3>Add Public Key &nbsp;<span class="badge" ng-class="{'badge-show': keyAdded}">Key Added!</span></h3>
-                          <div class="input-group">
-                            <span class="input-group-btn">
-                              <input type="text" ng-model="pubKey.name" placeholder="Name" class="form-control">
-                            </span>
-                            <span class="input-group-btn">
-                              <input type="text" ng-model="pubKey.key" placeholder="Key" class="form-control">
-                            </span>
-                            <span class="input-group-btn">
-                              <button
-                                class="btn btn-success"
-                                type="button"
-                                ng-click="addPublicKey(activeMailbox, pubKey)">Add</button>
-                            </span>
-                          </div>
+                    </div>
+                    <div class="row">
+                      <div class="col-sm-12">
+                        <h3>Add Public Key &nbsp;<span class="badge" ng-class="{'badge-show': keyAdded}">Key Added!</span></h3>
+                        <div class="input-group">
+                          <span class="input-group-btn">
+                            <input type="text" ng-model="pubKey.name" placeholder="Name" class="form-control">
+                          </span>
+                          <span class="input-group-btn">
+                            <input type="text" ng-model="pubKey.key" placeholder="Key" class="form-control">
+                          </span>
+                          <span class="input-group-btn">
+                            <button
+                              class="btn btn-success"
+                              type="button"
+                              ng-click="addPublicKey(activeMailbox, pubKey)">Add</button>
+                          </span>
                         </div>
                       </div>
                     </div>
                   </div>
                 </div>
-                <div class="col-sm-4">
-                  <div class="panel panel-warning">
-                    <div class="panel-heading">
-                      <h3 class="panel-title">Add Mailbox</h3>
-                    </div>
-                    <div class="panel-body">
-                      <label for="name" >Name</label>
+              </div>
+
+              <div class="col-sm-4">
+                <div class="card border-light">
+                  <div class="card-header">Add Mailbox</div>
+                  <div class="card-body">
+
+                    <div class="form-group">
+                      <label for="name">Name</label>
                       <div class="input-group">
-                        <input type="text" id="name" ng-model="newMailbox.name" placeholder="name" class="form-control">
+                        <input type="text" class="form-control" id="name" ng-model="newMailbox.name" placeholder="Mailbox name">
                         <span class="input-group-btn">
-                          <button class="btn btn-default pull-right" ng-click="addMailbox(newMailbox.name)">Add</button>
+                          <button class="btn btn-success" type="button" ng-click="addMailbox(newMailbox.name)">Add</button>
                         </span>
-                      </div><br/>
-                      <label ng-hide="!newMailbox.name">From Seed</label>
-                      <div ng-hide="!newMailbox.name" class="input-group">
-                        <input
-                          type="text"
-                          id="seed"
-                          ng-model="newMailbox.seed"
-                          placeholder="seed"
-                          class="form-control">
-                        <span class="input-group-btn">
-                          <button class="btn btn-default pull-right" ng-click="addMailbox(newMailbox.name, {seed:newMailbox.seed})">Add</button>
-                        </span>
-                      </div><br/>
-                      <label ng-hide="!newMailbox.name">From Secret</label>
-                      <div ng-hide="!newMailbox.name" class="input-group">
-                        <input
-                          type="text"
-                          id="seed"
-                          ng-model="newMailbox.secret"
-                          placeholder="secret"
-                          class="form-control">
-                        <span class="input-group-btn">
-                          <button class="btn btn-default pull-right" ng-click="addMailbox(newMailbox.name, {secret:newMailbox.secret})">Add</button>
-                        </span>
-                      </div>
-                      <hr />
-                      <form class="form">
+                    </div>
+                      <small class="form-text text-muted">Arbitrary mailbox name</small>
+                    </div>
+                    <div class="form-group" ng-hide="!newMailbox.name">
+                        <label for="seed">From Seed</label>
                         <div class="input-group">
-                          <input
-                            type="text"
-                            class="form-control"
-                            ng-model="quantity">
+                          <input type="text" class="form-control" id="seed" ng-model="newMailbox.seed" placeholder="Seed">
                           <span class="input-group-btn">
-                            <button
-                              class="btn btn-default"
-                              type="button"
-                              ng-click="addMailboxes(quantity)">Create Multiple Mailboxes</button>
+                            <button class="btn btn-success" type="button" ng-click="addMailbox(newMailbox.name, {seed:newMailbox.seed})">Add</button>
                           </span>
-                        </div>
-                      </form>
+                      </div>
+                        <small class="form-text text-muted">Create a mailbox from seed</small>
+                    </div>
+                    <div class="form-group" ng-hide="!newMailbox.name">
+                        <label for="secret">From Secret</label>
+                        <div class="input-group">
+                          <input type="text" class="form-control" id="secret" ng-model="newMailbox.secret" placeholder="Secret">
+                          <span class="input-group-btn">
+                            <button class="btn btn-success" type="button" ng-click="addMailbox(newMailbox.name, {secret:newMailbox.secret})">Add</button>
+                          </span>
+                      </div>
+                        <small class="form-text text-muted">Create a mailbox from secret</small>
+                    </div>
+
+                    <hr />
+
+                    <div class="input-group">
+                      <input type="text" class="form-control" ng-model="quantity">
+                      <span class="input-group-btn">
+                        <button class="btn btn-primary" type="button" ng-click="addMailboxes(quantity)">Create Multiple Mailboxes</button>
+                      </span>
                     </div>
                   </div>
                 </div>
@@ -193,6 +182,5 @@
         </div>
       </div>
     </div>
-    <!--  mailbox selector-->
   </div>
 </div>
