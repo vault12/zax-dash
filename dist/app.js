@@ -23,7 +23,7 @@
       return this.$window.location.origin;
     };
 
-    function CryptoService($window) {
+    function CryptoService($http, $window) {
       this.$window = $window;
       this.glow = this.$window.glow;
       this.nacl = this.$window.nacl_factory.instantiate(function() {});
@@ -34,15 +34,14 @@
       this.CryptoStorage = this.glow.CryptoStorage;
       this.CryptoStorage.startStorageSystem(new this.glow.SimpleStorageDriver(this.relayUrl()));
       this.glow.Utils.setAjaxImpl(function(url, data) {
-        return axios({
+        return $http({
           url: url,
-          method: 'post',
+          method: 'POST',
           headers: {
             'Accept': 'text/plain',
             'Content-Type': 'text/plain'
           },
           data: data,
-          responseType: 'text',
           timeout: 2000
         }).then(function(response) {
           return response.data;
@@ -54,26 +53,49 @@
 
   })();
 
-  angular.module('app').service('CryptoService', ['$window', CryptoService]);
+  angular.module('app').service('CryptoService', ['$http', '$window', CryptoService]);
+
+}).call(this);
+
+(function() {
+  var InfoPaneController;
+
+  InfoPaneController = (function() {
+    function InfoPaneController($scope, CryptoService) {
+      $scope.relay_url = CryptoService.relayUrl();
+    }
+
+    return InfoPaneController;
+
+  })();
+
+  angular.module('app').controller('InfoPaneController', ['$scope', 'CryptoService', InfoPaneController]);
+
+}).call(this);
+
+(function() {
+  angular.module('app').directive('infoPane', function() {
+    return {
+      replace: true,
+      restrict: 'E',
+      templateUrl: 'src/info-pane.template.html',
+      controller: 'InfoPaneController',
+      scope: '='
+    };
+  });
 
 }).call(this);
 
 (function() {
   var RelayService,
-    bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
-    slice = [].slice;
+    bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
 
   RelayService = (function() {
     RelayService.prototype.host = "";
 
-    RelayService.prototype.headers = {
-      "Content-Type": "text/plain"
-    };
-
     RelayService.prototype.mailboxes = {};
 
-    function RelayService($http, $q, CryptoService, $location) {
-      this.$http = $http;
+    function RelayService($q, CryptoService) {
       this.$q = $q;
       this.CryptoService = CryptoService;
       this.newMailbox = bind(this.newMailbox, this);
@@ -187,20 +209,6 @@
       return this.relay = new this.CryptoService.Relay(this.host);
     };
 
-    RelayService.prototype._concat = function() {
-      var array, arrays, concatArray, i, item, j, len, len1;
-      arrays = 1 <= arguments.length ? slice.call(arguments, 0) : [];
-      concatArray = [];
-      for (i = 0, len = arrays.length; i < len; i++) {
-        array = arrays[i];
-        for (j = 0, len1 = array.length; j < len1; j++) {
-          item = array[j];
-          concatArray.push(item);
-        }
-      }
-      return concatArray;
-    };
-
     RelayService.prototype._randomString = function(length) {
       var id;
       if (length == null) {
@@ -217,7 +225,7 @@
 
   })();
 
-  angular.module('app').service('RelayService', ['$http', '$q', 'CryptoService', '$location', RelayService]);
+  angular.module('app').service('RelayService', ['$q', 'CryptoService', RelayService]);
 
 }).call(this);
 
@@ -227,10 +235,8 @@
   RequestPaneController = (function() {
     RequestPaneController.prototype.mailboxPrefix = "_mailbox";
 
-    function RequestPaneController(RelayService, $scope, $q) {
+    function RequestPaneController(RelayService, $scope, $q, $timeout) {
       var first_names, i, j, k, key, l, len, len1, name, next, ref;
-      $('#key-confirmation').hide();
-      $('#send-confirmation').hide();
       first_names = ["Alice", "Bob", "Charlie", "Chuck", "Dave", "Erin", "Eve", "Faith", "Frank", "Mallory", "Oscar", "Peggy", "Pat", "Sam", "Sally", "Sybil", "Trent", "Trudy", "Victor", "Walter", "Wendy"].sort(function() {
         return .5 - Math.random();
       });
@@ -267,6 +273,9 @@
             msg = data[l];
             if (mailbox.messagesNonces.indexOf(msg.nonce) === -1) {
               console.log("incoming message:", msg);
+              if (msg.kind === 'file') {
+                msg.data = 'FILE, uploadID: ' + JSON.parse(msg.data).uploadID;
+              }
               mailbox.messagesNonces.push(msg.nonce);
               mailbox.messages.push(msg);
             }
@@ -296,17 +305,20 @@
           return $scope.$apply();
         });
       };
-      $scope.sendMessage = (function(_this) {
-        return function(mailbox, outgoing) {
-          return RelayService.sendToVia(outgoing.recipient, mailbox, outgoing.message).then(function(data) {
-            $('#send-confirmation').show().fadeOut(3000);
-            return $scope.outgoing = {
-              message: "",
-              recipient: ""
-            };
-          });
-        };
-      })(this);
+      $scope.sendMessage = function(mailbox, outgoing) {
+        return RelayService.sendToVia(outgoing.recipient, mailbox, outgoing.message).then(function(data) {
+          $scope.messageSent = true;
+          $timeout(function() {
+            $scope.messageSent = false;
+            return $scope.$apply();
+          }, 3000);
+          $scope.outgoing = {
+            message: "",
+            recipient: ""
+          };
+          return $scope.$apply();
+        });
+      };
       $scope.deleteMailbox = (function(_this) {
         return function(mailbox) {
           name = mailbox.identity;
@@ -340,17 +352,20 @@
           }), $q.all());
         };
       })(this);
-      $scope.addPublicKey = (function(_this) {
-        return function(mailbox, key) {
-          if (mailbox.keyRing.addGuest(key.name, key.key)) {
-            $('#key-confirmation').show().fadeOut(3000);
-            return $scope.pubKey = {
-              name: "",
-              key: ""
-            };
-          }
-        };
-      })(this);
+      $scope.addPublicKey = function(mailbox, key) {
+        if (mailbox.keyRing.addGuest(key.name, key.key)) {
+          $scope.keyAdded = true;
+          $timeout(function() {
+            $scope.keyAdded = false;
+            return $scope.$apply();
+          }, 3000);
+          $scope.pubKey = {
+            name: "",
+            key: ""
+          };
+          return $scope.$apply();
+        }
+      };
       next = $q.all();
       ref = Object.keys(localStorage);
       for (l = 0, len1 = ref.length; l < len1; l++) {
@@ -370,28 +385,19 @@
 
   })();
 
-  angular.module('app').controller('RequestPaneController', ['RelayService', '$scope', '$q', RequestPaneController]);
+  angular.module('app').controller('RequestPaneController', ['RelayService', '$scope', '$q', '$timeout', RequestPaneController]);
 
 }).call(this);
 
 (function() {
-  var requestPane;
-
-  requestPane = function(RequestService, LoggerService, base64) {
-    var directive;
-    directive = {
-      transclude: true,
+  angular.module('app').directive('requestPane', function() {
+    return {
+      replace: true,
       restrict: 'E',
-      templateUrl: "request-pane/request-pane.template.html",
-      controller: "RequestPaneController",
-      scope: "=",
-      link: function(scope, attrs, element) {}
+      templateUrl: 'src/request-pane.template.html',
+      controller: 'RequestPaneController',
+      scope: '='
     };
-    return directive;
-  };
-
-  angular.module('app').directive("requestPane", [requestPane]);
+  });
 
 }).call(this);
-
-//# sourceMappingURL=app.js.map

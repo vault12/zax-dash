@@ -4,7 +4,7 @@ angular
     {
       replace: true
       restrict: 'E'
-      templateUrl: 'request-pane/request-pane.template.html'
+      templateUrl: 'src/request-pane.template.html'
       controller: 'RequestPaneController'
       scope: '='
     }

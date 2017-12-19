@@ -8,17 +8,9 @@ process.on 'uncaughtException', (err)->
   if not watching then throw err else gutil.log err.stack || err
 
 conf =
-  coffee: [
-    '**/*.coffee'
-    '*.coffee'
-    '!gulpfile.coffee'
-    '!node_modules/**/*.coffee'
-  ]
-  target: './build/'
-  watch: [
-    '**/*.coffee'
-    '**/*.html'
-  ]
+  coffee: ['src/**/*.coffee']
+  target: 'build/'
+  watch: ['src/**/*.coffee', '**/*.html']
 
 watching = false
 
