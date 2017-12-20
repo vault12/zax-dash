@@ -10,7 +10,7 @@ Before you open a ticket or send a pull request, [search](https://github.com/vau
 Before sending a pull request for a feature, be sure the feature has full [test coverage](tests).
 
 ## Coding Style
-Use the same coding style as the rest of the [codebase](request-pane). If you're new to CoffeeScript, we recommend the following [style guide](https://github.com/polarmobile/coffeescript-style-guide).
+Use the same coding style as the rest of the [codebase](src). If you're new to CoffeeScript, we recommend the following [style guide](https://github.com/polarmobile/coffeescript-style-guide).
 
 ## Commit messages
 Please read the [seven rules](http://chris.beams.io/posts/git-commit/#seven-rules) set out in [How to Write a Git Commit Message](http://chris.beams.io/posts/git-commit/), and adhere to these rules for any commits.
