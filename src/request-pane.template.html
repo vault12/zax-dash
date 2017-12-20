@@ -8,8 +8,8 @@
             <th>Name</th>
             <th>Secret Key</th>
             <th>Public Key</th>
-            <th>Message Count</th>
-            <th>Mailbox Actions</th>
+            <th>Messages</th>
+            <th></th>
           </tr>
         </thead>
         <tr ng-repeat="mailbox in mailboxes" ng-click="selectMailbox(mailbox)" ng-class="{'table-success': mailbox == activeMailbox}">
@@ -19,13 +19,13 @@
           <td>
             <div class="input-group">
               <span class="input-group-btn">
-                <button class="btn btn-default" type="button" ng-click="messageCount(mailbox)">Get</button>
+                <button class="btn btn-success" type="button" ng-click="messageCount(mailbox)">⟳</button>
               </span>
               <input type="text" class="form-control" ng-model="mailbox.messageCount" placeholder="???">
             </div>
           </td>
           <td>
-            <button class="btn btn-default btn-danger" ng-click="deleteMailbox(mailbox)">Self Destruct</button>
+            <button class="btn btn-danger" ng-click="deleteMailbox(mailbox)">Delete</button>
           </td>
         </tr>
       </table>
@@ -39,12 +39,11 @@
           <h3 class="panel-title" ng-hide="!activeMailbox">{{activeMailbox.messageCount || "???"}} messages for
             <b>{{activeMailbox.identity}}</b>
           </h3>
-          <h3 class="panel-title" ng-hide="activeMailbox">select a mailbox</h3>
+          <h3 class="panel-title" ng-hide="activeMailbox">Select a mailbox</h3>
         </div>
         <div class="panel-body" ng-hide="!activeMailbox">
           <div class="row">
             <div class="col-sm-12">
-              <h3>Messages</h3>
               <table class="table table-striped">
                 <thead>
                   <tr>
