@@ -6,22 +6,31 @@ templateCache = require 'gulp-angular-templatecache'
 streamqueue = require 'streamqueue'
 
 conf =
-  dependencies: [
+  dependencies_css: [
+    'node_modules/bootswatch/dist/sandstone/bootstrap.min.css'
+  ]
+  dependencies_js: [
     'node_modules/js-nacl/lib/nacl_factory.js'
     'node_modules/theglow/dist/theglow.min.js'
     'node_modules/angular/angular.min.js'
   ]
   templates: ['src/**/*.html']
+  css: ['src/**/*.css']
   coffee: ['src/**/*.coffee']
   target: 'build/'
   dist: 'dist/'
-  watch: ['src/**/*.coffee', '**/*.html']
+  watch: ['src/**/*.coffee', 'src/**/*.css', '**/*.html']
 
-watching = false
-
-gulp.task 'build', ->
+gulp.task 'css', ->
   streamqueue objectMode: true,
-    gulp.src conf.dependencies
+    gulp.src conf.dependencies_css
+    gulp.src conf.css
+  .pipe concat 'app.css'
+  .pipe gulp.dest conf.dist
+
+gulp.task 'js', ->
+  streamqueue objectMode: true,
+    gulp.src conf.dependencies_js
     gulp.src conf.coffee
       .pipe coffee()
     gulp.src conf.templates
@@ -31,6 +40,10 @@ gulp.task 'build', ->
       )
   .pipe concat 'app.js'
   .pipe gulp.dest conf.dist
+
+gulp.task 'dist', ['css', 'js']
+
+gulp.task 'build', ->
 
 gulp.task 'default', ['build'], ->
   browserSync.init
@@ -45,5 +58,4 @@ gulp.task 'default', ['build'], ->
   gulp.watch conf.watch, ['watch']
 
 gulp.task 'watch', ['build'], ->
-  watching = true
   browserSync.reload()
