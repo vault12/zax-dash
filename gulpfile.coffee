@@ -17,7 +17,7 @@ conf =
   templates: ['src/**/*.html']
   css: ['src/**/*.css']
   coffee: ['src/**/*.coffee']
-  target: 'build/'
+  build: 'build/'
   dist: 'dist/'
   watch: ['src/**/*.coffee', 'src/**/*.css', '**/*.html']
 
@@ -44,12 +44,19 @@ gulp.task 'js', ->
 gulp.task 'dist', ['css', 'js']
 
 gulp.task 'build', ->
+  gulp.src conf.css
+  .pipe gulp.dest conf.build
+
+  gulp.src conf.coffee
+    .pipe coffee()
+  .pipe concat 'app.js'
+  .pipe gulp.dest conf.build
 
 gulp.task 'default', ['build'], ->
   browserSync.init
     server:
       baseDir: './'
-      index: 'index.html'
+      index: 'index-dev.html'
     notify: false
     online: true
     minify: false
