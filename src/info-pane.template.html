@@ -11,11 +11,11 @@
                 <form class="form-inline mr-auto">
                     <div class="form-group" ng-show="!editing">
                         <label for="relayURL" class="sr-only">Relay URL</label>
-                        <input type="text" readonly class="form-control-plaintext text-muted ml-sm-4 mr-sm-2" placeholder="Relay URL" id="relayURL" value="{{relay_url}}">
+                        <input type="text" readonly class="form-control-plaintext text-muted ml-sm-4 mr-sm-2" placeholder="Relay URL" id="relayURL" ng-model="relay_url">
                     </div>
                     <div class="form-group" ng-show="editing">
                         <label for="relayURL2" class="sr-only">Relay URL</label>
-                        <input type="text" class="form-control ml-sm-4 mr-sm-2" id="relayURL2" placeholder="Relay URL" value="{{relay_url}}">
+                        <input type="text" class="form-control ml-sm-4 mr-sm-2" id="relayURL2" placeholder="Relay URL" ng-model="editing_url">
                     </div>
                     <button class="btn btn-success my-2 mr-2 my-sm-0" ng-show="editing" ng-click="updateRelay()">Save</button>
                     <button class="btn btn-secondary my-2 my-sm-0" ng-click="editing = !editing">{{ editing ? 'Cancel' : 'Change' }}</button>

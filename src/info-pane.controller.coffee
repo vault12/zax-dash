@@ -1,8 +1,10 @@
 class InfoPaneController
-  constructor: ($scope, CryptoService)->
+  constructor: ($scope, CryptoService, RelayService)->
     $scope.relay_url = CryptoService.relayUrl()
+    $scope.editing_url = $scope.relay_url
 
     $scope.updateRelay = ->
+      $scope.relay_url = $scope.editing_url
       $scope.editing = false
 
 angular
@@ -10,5 +12,6 @@ angular
   .controller 'InfoPaneController', [
     '$scope'
     'CryptoService'
+    'RelayService'
     InfoPaneController
   ]
