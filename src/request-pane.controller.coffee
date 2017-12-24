@@ -16,7 +16,6 @@ class RequestPaneController
 
     # what mailboxes are we looking at?
     $scope.mailboxes = RelayService.mailboxes
-    $scope.relay = RelayService.relay
     $scope.activeMailbox = null
 
     # assume we'll need to add a mailbox to play with
