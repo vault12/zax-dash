@@ -21,10 +21,7 @@ class CryptoService
     @nacl = @$window.nacl_factory.instantiate( -> )
     @Mailbox = @glow.MailBox
     @Relay = @glow.Relay
-    @KeyRing = @glow.KeyRing
-    @Keys = @glow.Keys
-    @CryptoStorage = @glow.CryptoStorage
-    @CryptoStorage.startStorageSystem new @glow.SimpleStorageDriver(@relayUrl())
+    @glow.CryptoStorage.startStorageSystem new @glow.SimpleStorageDriver(@relayUrl())
 
     @glow.Utils.setAjaxImpl (url, data)->
       $http(
