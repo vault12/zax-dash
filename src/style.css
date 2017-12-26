@@ -44,6 +44,14 @@
       opacity: 0;
     }
 
+    .list-group .badge {
+      opacity: 1;
+    }
+
     .badge-show {
       opacity: 1;
+    }
+
+    .list-group-item {
+      cursor: pointer;
     }

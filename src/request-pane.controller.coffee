@@ -85,6 +85,10 @@ class RequestPaneController
     $scope.addMailboxes = (quantityToAdd)=>
       [1..quantityToAdd].reduce ((prev, i)=> prev.then => $scope.addMailbox @names.shift()), $q.all()
 
+    $scope.refreshCounter = ->
+      total = Object.keys $scope.mailboxes
+      [0..total.length-1].reduce ((prev, i)=> prev.then => $scope.messageCount $scope.mailboxes[total[i]]), $q.all()
+
     $scope.addPublicKey = (mailbox, key)->
       if mailbox.keyRing.addGuest key.name, key.key
         $scope.keyAdded = true
