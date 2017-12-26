@@ -40,6 +40,7 @@
 
     .badge {
       transition: opacity 1s ease-in-out;
+      margin: 5px 0;
       opacity: 0;
     }
 

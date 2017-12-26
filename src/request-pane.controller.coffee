@@ -14,6 +14,8 @@ class RequestPaneController
         else
           @names.push "#{name} #{i}"
 
+    $scope.subscreen = 'inbox'
+
     # what mailboxes are we looking at?
     $scope.mailboxes = RelayService.mailboxes
     $scope.activeMailbox = null
