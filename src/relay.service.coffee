@@ -1,15 +1,36 @@
 class RelayService
-  host: ""
   mailboxes: {}
 
-  constructor: (@$q, @CryptoService) ->
-    @host = @CryptoService.relayUrl()
+  relayUrl: ->
+    # Comment this out to use alternative relay url.
+    # Take care not to mix up ports of these services when
+    # both are running locally
+    return 'https://zax-test.vault12.com' # @$window.location.origin
+
+  constructor: (@$q, $http, @$window) ->
+    @$window.nacl_factory.instantiate( -> )
+    @Mailbox = @$window.glow.MailBox
+    @Relay = @$window.glow.Relay
+    @$window.glow.CryptoStorage.startStorageSystem new @$window.glow.SimpleStorageDriver @relayUrl()
+
+    @$window.glow.Utils.setAjaxImpl (url, data)->
+      $http(
+        url: url
+        method: 'POST'
+        headers:
+          'Accept': 'text/plain'
+          'Content-Type': 'text/plain'
+        data: data
+        timeout: 2000
+      ).then (response)->
+        response.data
+
     @_newRelay()
 
   # relay commands
   messageCount: (mailbox)->
     mailbox.connectToRelay(@relay).then =>
-      mailbox.relayCount(@relay).then (count)=>
+      mailbox.relayCount(@relay).then (count)->
         mailbox.messageCount = count
         count
 
@@ -26,15 +47,15 @@ class RelayService
     next = null
     if options.secret
       mailboxName = @_randomString() if not mailboxName
-      next = @CryptoService.Mailbox.fromSecKey(options.secret.fromBase64(), mailboxName).then (mailbox)=>
+      next = @Mailbox.fromSecKey(options.secret.fromBase64(), mailboxName).then (mailbox)->
         console.log "created mailbox #{mailboxName}:#{options.secret} from secret"
         mailbox
     else if options.seed
-      next = @CryptoService.Mailbox.fromSeed(options.seed, mailboxName).then (mailbox)=>
+      next = @Mailbox.fromSeed(options.seed, mailboxName).then (mailbox)->
         console.log "created mailbox #{mailboxName}:#{options.seed} from seed"
         mailbox
     else
-      next = @CryptoService.Mailbox.new(mailboxName).then (mailbox)=>
+      next = @Mailbox.new(mailboxName).then (mailbox)->
         console.log "created mailbox #{mailboxName} from scratch"
         mailbox
 
@@ -43,8 +64,8 @@ class RelayService
         # share keys among mailboxes
         tasks = []
         for name, mbx of @mailboxes
-          ((name, mbx)=>
-            tasks.push mbx.keyRing.addGuest(mailbox.identity, mailbox.getPubCommKey()).then =>
+          ((name, mbx)->
+            tasks.push mbx.keyRing.addGuest(mailbox.identity, mailbox.getPubCommKey()).then ->
               mailbox.keyRing.addGuest(mbx.identity, mbx.getPubCommKey())
           )(name, mbx)
 
@@ -68,7 +89,7 @@ class RelayService
     mailbox.sendToVia(recipient, @relay, message)
 
   _newRelay: ->
-    @relay = new @CryptoService.Relay(@host)
+    @relay = new @Relay(@relayUrl())
 
   _randomString: (length=32) ->
     id = ""
@@ -79,6 +100,7 @@ angular
   .module 'app'
   .service 'RelayService', [
     '$q'
-    'CryptoService'
+    '$http'
+    '$window'
     RelayService
   ]
