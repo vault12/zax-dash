@@ -8,7 +8,6 @@ class RelayService
     return 'https://zax-test.vault12.com' # @$window.location.origin
 
   constructor: (@$q, $http, @$window) ->
-    @$window.nacl_factory.instantiate( -> )
     @Mailbox = @$window.glow.MailBox
     @Relay = @$window.glow.Relay
     @$window.glow.CryptoStorage.startStorageSystem new @$window.glow.SimpleStorageDriver @relayUrl()
