@@ -55,3 +55,21 @@
     .list-group-item {
       cursor: pointer;
     }
+
+    .loader {
+      border: 4px solid #f3f3f3; /* Light grey */
+      border-top: 4px solid #79a736; /* Blue */
+      border-radius: 50%;
+      width: 28px;
+      height: 28px;
+      animation: spin 2s linear infinite;
+  }
+
+  @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+  }
+
+  .btn-narrow {
+    line-height: 14px;
+  }

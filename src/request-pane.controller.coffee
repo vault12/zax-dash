@@ -75,6 +75,7 @@ class RequestPaneController
     # show the active mailbox messages
     $scope.selectMailbox = (mailbox)->
       $scope.activeMailbox = mailbox
+      $scope.subscreen = 'inbox'
 
     # internals
     $scope.addMailbox = (name, options)=>
@@ -86,8 +87,11 @@ class RequestPaneController
       [1..quantityToAdd].reduce ((prev, i)=> prev.then => $scope.addMailbox @names.shift()), $q.all()
 
     $scope.refreshCounter = ->
+      $scope.showRefreshLoader = true
       total = Object.keys $scope.mailboxes
       [0..total.length-1].reduce ((prev, i)=> prev.then => $scope.messageCount $scope.mailboxes[total[i]]), $q.all()
+        .then ->
+          $scope.showRefreshLoader = false
 
     $scope.addPublicKey = (mailbox, key)->
       if mailbox.keyRing.addGuest key.name, key.key

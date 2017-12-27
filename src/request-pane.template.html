@@ -3,13 +3,16 @@
     <div class="col-sm-4 col-md-3">
 
       <div ng-hide="mailboxes | isEmpty">
+        <button class="btn btn-success btn-narrow float-right mb-2" type="button" ng-click="refreshCounter()">Refresh</button>
+        <div class="loader float-right mr-2" ng-show="showRefreshLoader"></div>
         <h4>Mailboxes</h4>
-        <button class="btn btn-success mb-2" type="button" ng-click="refreshCounter()">Refresh</button>
+        <div class="clearfix"></div>
         <ul class="list-group mb-4">
-          <li class="list-group-item list-group-item-action d-flex justify-content-between align-items-center"
-            ng-repeat="mailbox in mailboxes" ng-click="selectMailbox(mailbox)" ng-class="{'active': mailbox == activeMailbox}">
+          <li class="list-group-item list-group-item-action d-flex justify-content-between align-items-center" ng-repeat="mailbox in mailboxes"
+            ng-click="selectMailbox(mailbox)" ng-class="{'active': mailbox == activeMailbox}">
             {{mailbox.identity}}
-            <span class="badge badge-primary badge-pill">{{mailbox.messageCount}}</span>
+            <span class="badge badge-pill" ng-class="{'badge-primary': mailbox.messageCount > 0, 'badge-light': mailbox.messageCount == 0}">
+              {{mailbox.messageCount}}</span>
           </li>
         </ul>
       </div>
@@ -54,7 +57,11 @@
       </div>
     </div>
 
-    <div class="col-sm-8 col-md-9" ng-show="activeMailbox">
+    <div class="col-sm-8 col-md-9" ng-show="!activeMailbox">
+      <h2 class="text-center align-middle mt-8 mt-4 text-muted">No mailbox selected</h2>
+    </div>
+
+    <div class="col-sm-8 col-md-9" ng-if="activeMailbox">
       <button class="btn btn-danger float-right" ng-click="deleteMailbox(activeMailbox)">Delete Mailbox</button>
       <h4>{{activeMailbox.identity}}</h4>
       <form class="mt-4">
@@ -85,11 +92,12 @@
       </ul>
 
       <div class="row" ng-show="subscreen == 'inbox'">
-        <div class="col-sm-12">
-          <div class="btn-group mt-4 mb-4">
-            <button class="btn btn-primary" type="button" ng-click="getMessages(activeMailbox)">Fetch All</button>
-            <button class="btn btn-danger" type="button" ng-click="deleteMessages(activeMailbox)">Delete All</button>
-          </div>
+        <div class="col-sm-12" ng-show="activeMailbox.messageCount == 0">
+            <h2 class="text-center align-middle mt-8 mt-4 text-muted">No messages</h2>
+        </div>
+        <div class="col-sm-12" ng-show="activeMailbox.messageCount > 0">
+          <button class="btn btn-success mt-4 mb-4" type="button" ng-click="getMessages(activeMailbox)">Fetch All</button>
+          <button class="btn btn-danger mt-4 mb-4 float-right" type="button" ng-click="deleteMessages(activeMailbox)">Delete All</button>
           <table class="table table-striped">
             <thead>
               <tr>
