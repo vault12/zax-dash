@@ -55,6 +55,8 @@ class RequestPaneController
             index = mailbox.messagesNonces.indexOf(msg)
             mailbox.messagesNonces.splice(index, 1)
             mailbox.messages.splice(index, 1)
+
+        mailbox.messageCount = Object.keys(mailbox.messages).length
         $scope.$apply()
 
     $scope.sendMessage = (mailbox, outgoing)->
@@ -71,6 +73,7 @@ class RequestPaneController
       name = mailbox.identity
       RelayService.destroyMailbox(mailbox).then =>
         localStorage.removeItem "#{@mailboxPrefix}.#{name}"
+        $scope.activeMailbox = null
 
     # show the active mailbox messages
     $scope.selectMailbox = (mailbox)->
