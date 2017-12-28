@@ -23,7 +23,6 @@ class RequestPaneController
     # assume we'll need to add a mailbox to play with
     $scope.mailbox = {}
     $scope.addMailboxVisible = true
-    $scope.quantity = 3
 
     # mailbox commands
     $scope.messageCount = (mailbox)->

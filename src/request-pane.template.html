@@ -1,7 +1,6 @@
 <div class="container">
   <div class="row">
     <div class="col-sm-4 col-md-3">
-
       <div ng-hide="mailboxes | isEmpty">
         <button class="btn btn-success btn-narrow float-right mb-2" type="button" ng-click="refreshCounter()">⟳ Refresh</button>
         <div class="loader float-right mr-2" ng-show="showRefreshLoader"></div>
@@ -16,49 +15,50 @@
           </li>
         </ul>
       </div>
-
-      <h4>Add a mailbox</h4>
-      <div class="form-group">
-        <div class="input-group">
-          <input type="text" class="form-control" id="name" ng-model="newMailbox.name" placeholder="Mailbox name">
-          <span class="input-group-btn">
-            <button class="btn btn-success" type="button" ng-click="addMailbox(newMailbox.name)">Add</button>
-          </span>
-        </div>
-      </div>
-      <div class="form-group" ng-hide="!newMailbox.name">
-        <label for="seed">From Seed</label>
-        <div class="input-group">
-          <input type="text" class="form-control" id="seed" ng-model="newMailbox.seed" placeholder="Seed">
-          <span class="input-group-btn">
-            <button class="btn btn-success" type="button" ng-click="addMailbox(newMailbox.name, {seed:newMailbox.seed})">Add</button>
-          </span>
-        </div>
-        <small class="form-text text-muted">Create a mailbox from seed</small>
-      </div>
-      <div class="form-group" ng-hide="!newMailbox.name">
-        <label for="secret">From Secret</label>
-        <div class="input-group">
-          <input type="text" class="form-control" id="secret" ng-model="newMailbox.secret" placeholder="Secret">
-          <span class="input-group-btn">
-            <button class="btn btn-success" type="button" ng-click="addMailbox(newMailbox.name, {secret:newMailbox.secret})">Add</button>
-          </span>
-        </div>
-        <small class="form-text text-muted">Create a mailbox from secret</small>
-      </div>
-
-      <hr />
-
-      <div class="input-group">
-        <input type="text" class="form-control" ng-model="quantity">
-        <span class="input-group-btn">
-          <button class="btn btn-primary" type="button" ng-click="addMailboxes(quantity)">Create Multiple Mailboxes</button>
-        </span>
-      </div>
     </div>
 
     <div class="col-sm-8 col-md-9" ng-show="!activeMailbox">
       <h2 class="text-center align-middle mt-8 mt-4 text-muted">No mailbox selected</h2>
+      <div class="col-md-6 offset-md-3">
+        <hr />
+        <ul class="nav nav-tabs" ng-init="newScreen = 'new'">
+          <li class="nav-item">
+            <a class="nav-link" ng-class="{'active': newScreen == 'new'}" href="#" ng-click="newScreen = 'new'">New</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" ng-class="{'active': newScreen == 'seed'}" href="#" ng-click="newScreen = 'seed'">From Seed</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" ng-class="{'active': newScreen == 'secret'}" href="#" ng-click="newScreen = 'secret'">From Secret key</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" ng-class="{'active': newScreen == 'multiple'}" href="#" ng-click="newScreen = 'multiple'">Multiple</a>
+          </li>
+        </ul>
+        <div class="form-group mt-4" ng-show="newScreen != 'multiple'">
+          <input type="text" class="form-control" ng-model="newMailbox.name" placeholder="Mailbox name">
+          <button class="btn btn-success btn-block mt-3" ng-show="newScreen == 'new'" type="button" ng-click="addMailbox(newMailbox.name)">Add</button>
+        </div>
+        <div class="form-group" ng-hide="newScreen != 'seed'">
+          <input type="text" class="form-control" ng-model="newMailbox.seed" placeholder="Seed">
+          <button class="btn btn-success btn-block mt-3" type="button" ng-click="addMailbox(newMailbox.name, {seed:newMailbox.seed})">Add</button>
+        </div>
+        <div class="form-group" ng-hide="newScreen != 'secret'">
+          <input type="text" class="form-control" ng-model="newMailbox.secret" placeholder="Secret">
+          <button class="btn btn-success btn-block mt-3" type="button" ng-click="addMailbox(newMailbox.name, {secret:newMailbox.secret})">Add</button>
+        </div>
+
+        <div class="form-group mt-4" ng-show="newScreen == 'multiple'">
+          <select class="custom-select form-control" ng-init="quantity = '3'" ng-model="quantity">
+            <option value="2">2</option>
+            <option value="3">3</option>
+            <option value="4">4</option>
+            <option value="5">5</option>
+            <option value="10">10</option>
+          </select>
+          <button class="btn btn-success btn-block mt-3" type="button" ng-click="addMailboxes(quantity)">Add Multiple Mailboxes</button>
+        </div>
+      </div>
     </div>
 
     <div class="col-sm-8 col-md-9" ng-if="activeMailbox">
@@ -93,7 +93,7 @@
 
       <div class="row" ng-show="subscreen == 'inbox'">
         <div class="col-sm-12" ng-show="activeMailbox.messageCount == 0">
-            <h2 class="text-center align-middle mt-8 mt-4 text-muted">No messages</h2>
+          <h2 class="text-center align-middle mt-8 mt-4 text-muted">No messages</h2>
         </div>
         <div class="col-sm-12" ng-show="activeMailbox.messageCount > 0">
           <button class="btn btn-success mt-4 mb-4" type="button" ng-click="getMessages(activeMailbox)">Fetch All</button>
