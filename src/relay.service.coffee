@@ -45,7 +45,6 @@ class RelayService
     # make our mailboxes
     next = null
     if options.secret
-      mailboxName = @_randomString() if not mailboxName
       next = @Mailbox.fromSecKey(options.secret.fromBase64(), mailboxName).then (mailbox)->
         console.log "created mailbox #{mailboxName}:#{options.secret} from secret"
         mailbox
@@ -89,11 +88,6 @@ class RelayService
 
   _newRelay: ->
     @relay = new @Relay(@relayUrl())
-
-  _randomString: (length=32) ->
-    id = ""
-    id += Math.random().toString(36).substr(2) while id.length < length
-    id.substr 0, length
 
 angular
   .module 'app'

@@ -22,7 +22,6 @@ class RequestPaneController
 
     # assume we'll need to add a mailbox to play with
     $scope.mailbox = {}
-    $scope.addMailboxVisible = true
 
     # mailbox commands
     $scope.messageCount = (mailbox)->
@@ -83,7 +82,6 @@ class RequestPaneController
     $scope.addMailbox = (name, options)=>
       RelayService.newMailbox(name, options).then (mailbox)=>
         localStorage.setItem "#{@mailboxPrefix}.#{name}", mailbox.identity
-        $scope.newMailbox = mailbox # {name: "", options: null}
 
     $scope.addMailboxes = (quantityToAdd)=>
       [1..quantityToAdd].reduce ((prev, i)=> prev.then => $scope.addMailbox @names.shift()), $q.all()
