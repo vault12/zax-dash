@@ -21,6 +21,7 @@ class RequestPaneController
       $scope.relay_url = $scope.editing_url
       RelayService.changeRelay($scope.relay_url)
       $scope.editing = false
+      $scope.refreshCounter()
 
     # what mailboxes are we looking at?
     $scope.mailboxes = RelayService.mailboxes
@@ -33,7 +34,6 @@ class RequestPaneController
           mailbox.messagesNonces = []
         for msg in data
           unless mailbox.messagesNonces.indexOf(msg.nonce) != -1
-            console.log "incoming message:", msg
             if msg.kind == 'file'
               msg.data = '📎 uploadID: ' + JSON.parse(msg.data).uploadID
             mailbox.messagesNonces.push msg.nonce
