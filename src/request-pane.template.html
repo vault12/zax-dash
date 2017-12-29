@@ -62,7 +62,7 @@
       </div>
     </div>
 
-    <div class="col-sm-8 col-md-9" ng-if="activeMailbox">
+    <div class="col-sm-8 col-md-9" ng-if="activeMailbox" ng-init="subscreen = 'inbox'">
       <button class="btn btn-danger float-right" ng-click="deleteMailbox(activeMailbox)">Delete Mailbox</button>
       <h4>{{activeMailbox.identity}}</h4>
       <form class="mt-4">

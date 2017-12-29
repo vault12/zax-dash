@@ -58,19 +58,18 @@ class RelayService
         mailbox
 
     next.then (mailbox)=>
-      @messageCount(mailbox).then =>
-        # share keys among mailboxes
-        tasks = []
-        for name, mbx of @mailboxes
-          ((name, mbx)->
-            tasks.push mbx.keyRing.addGuest(mailbox.identity, mailbox.getPubCommKey()).then ->
-              mailbox.keyRing.addGuest(mbx.identity, mbx.getPubCommKey())
-          )(name, mbx)
+      # share keys among mailboxes
+      tasks = []
+      for name, mbx of @mailboxes
+        ((name, mbx)->
+          tasks.push mbx.keyRing.addGuest(mailbox.identity, mailbox.getPubCommKey()).then ->
+            mailbox.keyRing.addGuest(mbx.identity, mbx.getPubCommKey())
+        )(name, mbx)
 
-        @$q.all(tasks).then =>
-          # save the mailbox
-          @mailboxes[mailbox.identity] = mailbox
-          mailbox
+      @$q.all(tasks).then =>
+        # save the mailbox
+        @mailboxes[mailbox.identity] = mailbox
+        mailbox
 
   destroyMailbox: (mailbox)->
     tasks = []

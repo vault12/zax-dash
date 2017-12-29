@@ -14,20 +14,10 @@ class RequestPaneController
         else
           @names.push "#{name} #{i}"
 
-    $scope.subscreen = 'inbox'
-
     # what mailboxes are we looking at?
     $scope.mailboxes = RelayService.mailboxes
-    $scope.activeMailbox = null
-
-    # assume we'll need to add a mailbox to play with
-    $scope.mailbox = {}
 
     # mailbox commands
-    $scope.messageCount = (mailbox)->
-      RelayService.messageCount(mailbox).then ->
-        $scope.$apply()
-
     $scope.getMessages = (mailbox)->
       RelayService.getMessages(mailbox).then (data)->
         if !mailbox.messages
@@ -76,7 +66,7 @@ class RequestPaneController
     # show the active mailbox messages
     $scope.selectMailbox = (mailbox)->
       $scope.activeMailbox = mailbox
-      $scope.subscreen = 'inbox'
+      $scope.getMessages(mailbox)
 
     # internals
     $scope.addMailbox = (name, options)=>
@@ -89,7 +79,7 @@ class RequestPaneController
     $scope.refreshCounter = ->
       $scope.showRefreshLoader = true
       total = Object.keys $scope.mailboxes
-      [0..total.length-1].reduce ((prev, i)=> prev.then => $scope.messageCount $scope.mailboxes[total[i]]), $q.all()
+      [0..total.length-1].reduce ((prev, i)=> prev.then => RelayService.messageCount $scope.mailboxes[total[i]]), $q.all()
         .then ->
           $scope.showRefreshLoader = false
 
@@ -110,7 +100,9 @@ class RequestPaneController
         ((key)->
           next = next.then -> $scope.addMailbox(localStorage.getItem(key))
         )(key)
-    next
+
+    next.then ->
+      $scope.refreshCounter()
 
 angular
   .module 'app'
