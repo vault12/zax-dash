@@ -1,17 +1,13 @@
 class RelayService
   mailboxes: {}
 
-  relayUrl: ->
-    # Comment this out to use alternative relay url.
-    # Take care not to mix up ports of these services when
-    # both are running locally
-    return 'https://zax-test.vault12.com' # @$window.location.origin
+  # Comment this out to use alternative relay url.
+  # Take care not to mix up ports of these services when
+  # both are running locally
+  relayUrl: 'https://zax-test.vault12.com' # @$window.location.origin
 
   constructor: (@$q, $http, @$window) ->
     @Mailbox = @$window.glow.MailBox
-    @Relay = @$window.glow.Relay
-    @$window.glow.CryptoStorage.startStorageSystem new @$window.glow.SimpleStorageDriver @relayUrl()
-
     @$window.glow.Utils.setAjaxImpl (url, data)->
       $http(
         url: url
@@ -24,7 +20,11 @@ class RelayService
       ).then (response)->
         response.data
 
-    @_newRelay()
+    @_initRelay()
+
+  changeRelay: (newUrl) ->
+    @relayUrl = newUrl
+    @_initRelay()
 
   # relay commands
   messageCount: (mailbox)->
@@ -85,8 +85,10 @@ class RelayService
   sendToVia: (recipient, mailbox, message)->
     mailbox.sendToVia(recipient, @relay, message)
 
-  _newRelay: ->
-    @relay = new @Relay(@relayUrl())
+  _initRelay: ->
+    @$window.glow.CryptoStorage.startStorageSystem(
+      new @$window.glow.SimpleStorageDriver @relayUrl)
+    @relay = new @$window.glow.Relay @relayUrl
 
 angular
   .module 'app'
