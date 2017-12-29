@@ -1,155 +1,219 @@
-<div class="container">
-  <div class="row">
-    <div class="col-sm-4 col-md-3">
-      <div ng-hide="mailboxes | isEmpty">
-        <button class="btn btn-success btn-narrow float-right mb-2" type="button" ng-click="refreshCounter()">⟳ Refresh</button>
-        <div class="loader float-right mr-2" ng-show="showRefreshLoader"></div>
-        <h4>Mailboxes</h4>
-        <div class="clearfix"></div>
-        <ul class="list-group mb-4">
-          <li class="list-group-item list-group-item-action d-flex justify-content-between align-items-center" ng-repeat="mailbox in mailboxes"
-            ng-click="selectMailbox(mailbox)" ng-class="{'active': mailbox == activeMailbox}">
-            {{mailbox.identity}}
-            <span class="badge badge-pill" ng-class="{'badge-primary': mailbox.messageCount > 0, 'badge-light': mailbox.messageCount == 0}">
-              {{mailbox.messageCount}}</span>
+<div>
+  <nav class="navbar navbar-expand-lg navbar-dark bg-primary mb-4">
+    <div class="container">
+      <a class="navbar-brand" href="">Zax Relay</a>
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar" aria-controls="navbar" aria-expanded="false"
+        aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      <div class="collapse navbar-collapse" id="navbar">
+        <form class="form-inline mr-auto">
+          <div class="form-group" ng-show="!editing">
+            <label for="relayURL" class="sr-only">Relay URL</label>
+            <input type="text" readonly class="form-control ml-sm-4 mr-sm-2" placeholder="Relay URL" id="relayURL" ng-model="relay_url">
+          </div>
+          <div class="form-group" ng-show="editing">
+            <label for="relayURL2" class="sr-only">Relay URL</label>
+            <input type="text" class="form-control ml-sm-4 mr-sm-2" id="relayURL2" placeholder="Relay URL" ng-model="editing_url">
+          </div>
+          <button class="btn btn-success my-2 mr-2 my-sm-0" ng-show="editing" ng-click="updateRelay()">Save</button>
+          <button class="btn btn-secondary my-2 my-sm-0" ng-click="editing = !editing">{{ editing ? 'Cancel' : 'Change' }}</button>
+        </form>
+        <ul class="navbar-nav my-2 my-lg-0">
+          <li class="nav-item">
+            <a class="nav-link" href="http://bit.ly/nacl_relay_spec" target="_blank">Technical spec</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="https://github.com/vault12/zax-dash" target="_blank">GitHub</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="https://slack.vault12.com/" target="_blank">Slack</a>
           </li>
         </ul>
       </div>
-      <button type="button" class="btn btn-block btn-outline-success" ng-click="activeMailbox = null">+ Add</button>
     </div>
+  </nav>
 
-    <div class="col-sm-8 col-md-9" ng-show="!activeMailbox">
-      <h2 class="text-center align-middle mt-8 mt-4 text-muted">No mailbox selected</h2>
-      <div class="col-md-6 offset-md-3">
-        <hr />
-        <ul class="nav nav-tabs" ng-init="newScreen = 'new'">
-          <li class="nav-item">
-            <a class="nav-link" ng-class="{'active': newScreen == 'new'}" href="#" ng-click="newScreen = 'new'">New</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" ng-class="{'active': newScreen == 'seed'}" href="#" ng-click="newScreen = 'seed'">From Seed</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" ng-class="{'active': newScreen == 'secret'}" href="#" ng-click="newScreen = 'secret'">From Secret key</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" ng-class="{'active': newScreen == 'multiple'}" href="#" ng-click="newScreen = 'multiple'">Multiple</a>
-          </li>
-        </ul>
-        <div class="form-group mt-4" ng-show="newScreen != 'multiple'">
-          <input type="text" class="form-control" ng-model="newMailbox.name" placeholder="Mailbox name">
-          <button class="btn btn-success btn-block mt-3" ng-show="newScreen == 'new'" type="button" ng-click="addMailbox(newMailbox.name)">Add</button>
+  <!--<div class="alert alert-dismissible alert-danger">
+      <div class="container">
+          <button type="button" class="close" data-dismiss="alert">&times;</button>
+          <strong>This relay should not be used in production situations.</strong>
+          We often deploy new versions of this node without notice. For testing purposes,
+          <pre>relay.mailbox_timeout</pre> is set for 30 minutes.
+      </div>
+  </div>-->
+  <!--
+<div class="panel panel-primary info-pane" ng-hide="infoVisible">
+    <div class="panel-body">
+        <div class="row">
+            <div class="col-md-12">
+                <b>Welcome!</b> This node runs the latest development version of
+                <a href="https://github.com/vault12/zax" target="_blank">Zax</a>. Zax is a
+                <a href="https://s3-us-west-1.amazonaws.com/vault12/zax_infogfx.jpg" target="_blank">NaCl-based Cryptographic Relay</a>. You can read the full
+                <a href="http://bit.ly/nacl_relay_spec" target="_blank">technical specification here</a>. The page you are currently viewing is a
+                <a href="https://github.com/vault12/zax-dash" target="_blank">standalone application</a>, designed to provide user-friendly access to this Zax instance. It is bundled
+                with the Zax source in the
+                <pre>/public</pre> directory. If you have any questions on how to use the Zax cryptography stack, please
+                <a href="https://slack.vault12.com/" target="_blank">join our Slack community</a>.
+            </div>
         </div>
-        <div class="form-group" ng-hide="newScreen != 'seed'">
-          <input type="text" class="form-control" ng-model="newMailbox.seed" placeholder="Seed">
-          <button class="btn btn-success btn-block mt-3" type="button" ng-click="addMailbox(newMailbox.name, {seed:newMailbox.seed})">Add</button>
-        </div>
-        <div class="form-group" ng-hide="newScreen != 'secret'">
-          <input type="text" class="form-control" ng-model="newMailbox.secret" placeholder="Secret">
-          <button class="btn btn-success btn-block mt-3" type="button" ng-click="addMailbox(newMailbox.name, {secret:newMailbox.secret})">Add</button>
-        </div>
+    </div>
+</div>-->
 
-        <div class="form-group mt-4" ng-show="newScreen == 'multiple'">
-          <select class="custom-select form-control" ng-init="quantity = '3'" ng-model="quantity">
-            <option value="2">2</option>
-            <option value="3">3</option>
-            <option value="4">4</option>
-            <option value="5">5</option>
-            <option value="10">10</option>
-          </select>
-          <button class="btn btn-success btn-block mt-3" type="button" ng-click="addMailboxes(quantity)">Add Multiple Mailboxes</button>
+  <div class="container">
+    <div class="row">
+      <div class="col-sm-4 col-md-3">
+        <div ng-hide="mailboxes | isEmpty">
+          <button class="btn btn-success btn-narrow float-right mb-2" type="button" ng-click="refreshCounter()">⟳ Refresh</button>
+          <div class="loader float-right mr-2" ng-show="showRefreshLoader"></div>
+          <h4>Mailboxes</h4>
+          <div class="clearfix"></div>
+          <ul class="list-group mb-4">
+            <li class="list-group-item list-group-item-action d-flex justify-content-between align-items-center" ng-repeat="mailbox in mailboxes"
+              ng-click="selectMailbox(mailbox)" ng-class="{'active': mailbox == activeMailbox}">
+              {{mailbox.identity}}
+              <span class="badge badge-pill" ng-class="{'badge-primary': mailbox.messageCount > 0, 'badge-light': mailbox.messageCount == 0}">
+                {{mailbox.messageCount}}</span>
+            </li>
+          </ul>
+        </div>
+        <button type="button" class="btn btn-block btn-outline-success" ng-click="activeMailbox = null">+ Add</button>
+      </div>
+
+      <div class="col-sm-8 col-md-9" ng-show="!activeMailbox">
+        <h2 class="text-center align-middle mt-8 mt-4 text-muted">No mailbox selected</h2>
+        <div class="col-md-6 offset-md-3">
+          <hr />
+          <ul class="nav nav-tabs" ng-init="newScreen = 'new'">
+            <li class="nav-item">
+              <a class="nav-link" ng-class="{'active': newScreen == 'new'}" href="#" ng-click="newScreen = 'new'">New</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" ng-class="{'active': newScreen == 'seed'}" href="#" ng-click="newScreen = 'seed'">From Seed</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" ng-class="{'active': newScreen == 'secret'}" href="#" ng-click="newScreen = 'secret'">From Secret key</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" ng-class="{'active': newScreen == 'multiple'}" href="#" ng-click="newScreen = 'multiple'">Multiple</a>
+            </li>
+          </ul>
+          <div class="form-group mt-4" ng-show="newScreen != 'multiple'">
+            <input type="text" class="form-control" ng-model="newMailbox.name" placeholder="Mailbox name">
+            <button class="btn btn-success btn-block mt-3" ng-show="newScreen == 'new'" type="button" ng-click="addMailbox(newMailbox.name)">Add</button>
+          </div>
+          <div class="form-group" ng-hide="newScreen != 'seed'">
+            <input type="text" class="form-control" ng-model="newMailbox.seed" placeholder="Seed">
+            <button class="btn btn-success btn-block mt-3" type="button" ng-click="addMailbox(newMailbox.name, {seed:newMailbox.seed})">Add</button>
+          </div>
+          <div class="form-group" ng-hide="newScreen != 'secret'">
+            <input type="text" class="form-control" ng-model="newMailbox.secret" placeholder="Secret">
+            <button class="btn btn-success btn-block mt-3" type="button" ng-click="addMailbox(newMailbox.name, {secret:newMailbox.secret})">Add</button>
+          </div>
+
+          <div class="form-group mt-4" ng-show="newScreen == 'multiple'">
+            <select class="custom-select form-control" ng-init="quantity = '3'" ng-model="quantity">
+              <option value="2">2</option>
+              <option value="3">3</option>
+              <option value="4">4</option>
+              <option value="5">5</option>
+              <option value="10">10</option>
+            </select>
+            <button class="btn btn-success btn-block mt-3" type="button" ng-click="addMailboxes(quantity)">Add Multiple Mailboxes</button>
+          </div>
         </div>
       </div>
-    </div>
 
-    <div class="col-sm-8 col-md-9" ng-if="activeMailbox" ng-init="subscreen = 'inbox'">
-      <button class="btn btn-danger float-right" ng-click="deleteMailbox(activeMailbox)">Delete Mailbox</button>
-      <h4>{{activeMailbox.identity}}</h4>
-      <form class="mt-4">
-        <div class="form-group row">
-          <label for="secretKey" class="col-sm-2 col-form-label">Secret Key</label>
-          <div class="col-sm-10">
-            <input type="text" readonly class="form-control" id="secretKey" value="{{activeMailbox.keyRing.commKey.strSecKey()}}">
+      <div class="col-sm-8 col-md-9" ng-if="activeMailbox" ng-init="subscreen = 'inbox'">
+        <button class="btn btn-danger float-right" ng-click="deleteMailbox(activeMailbox)">Delete Mailbox</button>
+        <h4>{{activeMailbox.identity}}</h4>
+        <form class="mt-4">
+          <div class="form-group row">
+            <label for="secretKey" class="col-sm-2 col-form-label">Secret Key</label>
+            <div class="col-sm-10">
+              <input type="text" readonly class="form-control" id="secretKey" value="{{activeMailbox.keyRing.commKey.strSecKey()}}">
+            </div>
           </div>
-        </div>
-        <div class="form-group row">
-          <label for="publicKey" class="col-sm-2 col-form-label">Public Key</label>
-          <div class="col-sm-10">
-            <input type="text" readonly class="form-control" id="publicKey" value="{{activeMailbox.keyRing.commKey.strPubKey()}}">
+          <div class="form-group row">
+            <label for="publicKey" class="col-sm-2 col-form-label">Public Key</label>
+            <div class="col-sm-10">
+              <input type="text" readonly class="form-control" id="publicKey" value="{{activeMailbox.keyRing.commKey.strPubKey()}}">
+            </div>
           </div>
-        </div>
-      </form>
+        </form>
 
-      <ul class="nav nav-tabs">
-        <li class="nav-item">
-          <a class="nav-link active" ng-class="{'active': subscreen == 'inbox'}" ng-click="subscreen = 'inbox'" href="#">Inbox</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" ng-class="{'active': subscreen == 'sendMessage'}" ng-click="subscreen = 'sendMessage'" href="#">Send a message</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" ng-class="{'active': subscreen == 'addKey'}" ng-click="subscreen = 'addKey'" href="#">Add public key</a>
-        </li>
-      </ul>
+        <ul class="nav nav-tabs">
+          <li class="nav-item">
+            <a class="nav-link active" ng-class="{'active': subscreen == 'inbox'}" ng-click="subscreen = 'inbox'" href="#">Inbox</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" ng-class="{'active': subscreen == 'sendMessage'}" ng-click="subscreen = 'sendMessage'" href="#">Send a message</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" ng-class="{'active': subscreen == 'addKey'}" ng-click="subscreen = 'addKey'" href="#">Add public key</a>
+          </li>
+        </ul>
 
-      <div class="row" ng-show="subscreen == 'inbox'">
-        <div class="col-sm-12" ng-show="activeMailbox.messageCount == 0">
-          <h2 class="text-center align-middle mt-8 mt-4 text-muted">No messages</h2>
-        </div>
-        <div class="col-sm-12" ng-show="activeMailbox.messageCount > 0">
-          <button class="btn btn-success mt-4 mb-4" type="button" ng-click="getMessages(activeMailbox)">Fetch All</button>
-          <button class="btn btn-danger mt-4 mb-4 float-right" type="button" ng-click="deleteMessages(activeMailbox)">Delete All</button>
-          <table class="table table-striped">
-            <thead>
-              <tr>
-                <th>From</th>
-                <th>Nonce</th>
-                <th>Time</th>
-                <th>Message</th>
-                <th></th>
+        <div class="row" ng-show="subscreen == 'inbox'">
+          <div class="col-sm-12" ng-show="activeMailbox.messageCount == 0">
+            <h2 class="text-center align-middle mt-8 mt-4 text-muted">No messages</h2>
+          </div>
+          <div class="col-sm-12" ng-show="activeMailbox.messageCount > 0">
+            <button class="btn btn-success mt-4 mb-4" type="button" ng-click="getMessages(activeMailbox)">Fetch All</button>
+            <button class="btn btn-danger mt-4 mb-4 float-right" type="button" ng-click="deleteMessages(activeMailbox)">Delete All</button>
+            <table class="table table-striped">
+              <thead>
+                <tr>
+                  <th>From</th>
+                  <th>Nonce</th>
+                  <th>Time</th>
+                  <th>Message</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tr ng-repeat="message in activeMailbox.messages">
+                <td>
+                  <div class="overflow-box" ng-click="selectText(e)">{{message.fromTag || message.from}}</div>
+                </td>
+                <td>
+                  <div class="overflow-box">{{message.nonce}}</div>
+                </td>
+                <td>
+                  <div class="overflow-box">{{message.time * 1000 | date:'short'}}</div>
+                </td>
+                <td>
+                  <div class="overflow-wrap">{{message.msg || message.data}}</div>
+                </td>
+                <td>
+                  <button class="btn btn-mini btn-danger" ng-click="deleteMessages(activeMailbox, [message.nonce])">
+                    <i class="glyphicon glyphicon-remove"></i> Delete
+                  </button>
+                </td>
               </tr>
-            </thead>
-            <tr ng-repeat="message in activeMailbox.messages">
-              <td>
-                <div class="overflow-box" ng-click="selectText(e)">{{message.fromTag || message.from}}</div>
-              </td>
-              <td>
-                <div class="overflow-box">{{message.nonce}}</div>
-              </td>
-              <td>
-                <div class="overflow-box">{{message.time * 1000 | date:'short'}}</div>
-              </td>
-              <td>
-                <div class="overflow-wrap">{{message.msg || message.data}}</div>
-              </td>
-              <td>
-                <button class="btn btn-mini btn-danger" ng-click="deleteMessages(activeMailbox, [message.nonce])">
-                  <i class="glyphicon glyphicon-remove"></i> Delete
-                </button>
-              </td>
-            </tr>
-          </table>
+            </table>
+          </div>
         </div>
-      </div>
 
-      <div class="row" ng-show="subscreen == 'sendMessage'">
-        <div class="col-sm-6">
-          <span class="badge badge-success" ng-class="{'badge-show': messageSent}">Message sent!</span>
-          <select type="text" ng-model="outgoing.recipient" class="form-control custom-select">
-            <option value="" disabled selected>Recipient</option>
-            <option ng-repeat="(guest, pubKey) in activeMailbox.keyRing.guestKeys" value="{{guest}}">{{guest}}</option>
-          </select>
-          <textarea ng-model="outgoing.message" placeholder="Message" rows="3" class="form-control mt-2"></textarea>
-          <button class="btn btn-success btn-lg btn-block mt-2" type="button" ng-click="sendMessage(activeMailbox, outgoing)">Send</button>
+        <div class="row" ng-show="subscreen == 'sendMessage'">
+          <div class="col-sm-6">
+            <span class="badge badge-success" ng-class="{'badge-show': messageSent}">Message sent!</span>
+            <select type="text" ng-model="outgoing.recipient" class="form-control custom-select">
+              <option value="" disabled selected>Recipient</option>
+              <option ng-repeat="(guest, pubKey) in activeMailbox.keyRing.guestKeys" value="{{guest}}">{{guest}}</option>
+            </select>
+            <textarea ng-model="outgoing.message" placeholder="Message" rows="3" class="form-control mt-2"></textarea>
+            <button class="btn btn-success btn-lg btn-block mt-2" type="button" ng-click="sendMessage(activeMailbox, outgoing)">Send</button>
+          </div>
         </div>
-      </div>
 
-      <div class="row" ng-show="subscreen == 'addKey'">
-        <div class="col-sm-6">
-          <span class="badge badge-success" ng-class="{'badge-show': keyAdded}">Key added!</span>
-          <input type="text" ng-model="pubKey.name" placeholder="User Name" class="form-control">
-          <input type="text" ng-model="pubKey.key" placeholder="Public Key (Base64)" class="form-control mt-2">
-          <button class="btn btn-success btn-lg btn-block mt-2" type="button" ng-click="addPublicKey(activeMailbox, pubKey)">Add</button>
+        <div class="row" ng-show="subscreen == 'addKey'">
+          <div class="col-sm-6">
+            <span class="badge badge-success" ng-class="{'badge-show': keyAdded}">Key added!</span>
+            <input type="text" ng-model="pubKey.name" placeholder="User Name" class="form-control">
+            <input type="text" ng-model="pubKey.key" placeholder="Public Key (Base64)" class="form-control mt-2">
+            <button class="btn btn-success btn-lg btn-block mt-2" type="button" ng-click="addPublicKey(activeMailbox, pubKey)">Add</button>
+          </div>
         </div>
       </div>
     </div>

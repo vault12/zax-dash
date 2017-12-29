@@ -14,6 +14,14 @@ class RequestPaneController
         else
           @names.push "#{name} #{i}"
 
+    $scope.relay_url = RelayService.relayUrl
+    $scope.editing_url = $scope.relay_url
+
+    $scope.updateRelay = ->
+      $scope.relay_url = $scope.editing_url
+      RelayService.changeRelay($scope.relay_url)
+      $scope.editing = false
+
     # what mailboxes are we looking at?
     $scope.mailboxes = RelayService.mailboxes
 
