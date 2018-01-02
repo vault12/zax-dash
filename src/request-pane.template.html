@@ -78,7 +78,7 @@
             </li>
           </ul>
         </div>
-        <button type="button" class="btn btn-block btn-outline-success" ng-click="activeMailbox = null">+ Add</button>
+        <button type="button" class="btn btn-block btn-outline-success" ng-click="activeMailbox = null" ng-hide="mailboxes | isEmpty">+ Add</button>
       </div>
 
       <div class="col-sm-8 col-md-9" ng-show="!activeMailbox">
