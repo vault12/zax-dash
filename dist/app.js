@@ -1207,8 +1207,11 @@ minFrac:2,minInt:1,negPre:"-\u00a4",negSuf:"",posPre:"\u00a4",posSuf:""}]},id:"e
         };
         $scope.refreshCounter = function() {
           var l, ref, results, total;
-          $scope.showRefreshLoader = true;
           total = Object.keys($scope.mailboxes);
+          if (!total) {
+            return;
+          }
+          $scope.showRefreshLoader = true;
           return (function() {
             results = [];
             for (var l = 0, ref = total.length - 1; 0 <= ref ? l <= ref : l >= ref; 0 <= ref ? l++ : l--){ results.push(l); }
