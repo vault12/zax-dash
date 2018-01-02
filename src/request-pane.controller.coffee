@@ -85,8 +85,10 @@ class RequestPaneController
       [1..quantityToAdd].reduce ((prev, i)=> prev.then => $scope.addMailbox @names.shift()), $q.all()
 
     $scope.refreshCounter = ->
-      $scope.showRefreshLoader = true
       total = Object.keys $scope.mailboxes
+      if !total
+        return
+      $scope.showRefreshLoader = true
       [0..total.length-1].reduce ((prev, i)=> prev.then => RelayService.messageCount $scope.mailboxes[total[i]]), $q.all()
         .then ->
           $scope.showRefreshLoader = false
