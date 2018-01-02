@@ -1,12 +1,16 @@
 class RelayService
   mailboxes: {}
 
-  # Comment this out to use alternative relay url.
-  # Take care not to mix up ports of these services when
-  # both are running locally
-  relayUrl: 'https://zax-test.vault12.com' # @$window.location.origin
-
   constructor: (@$q, $http, @$window) ->
+    if @$window.location.origin.indexOf('github.io') > -1
+      # Use test server by default
+      # when running on http://vault12.github.io/zax-dash/
+      @relayUrl = 'https://zax-test.vault12.com'
+    else
+      # Take care not to mix up ports of these services when
+      # both are running locally
+      @relayUrl = @$window.location.origin
+
     @Mailbox = @$window.glow.MailBox
     @$window.glow.Utils.setAjaxImpl (url, data)->
       $http(
