@@ -1,50 +1,62 @@
 gulp = require 'gulp'
-watch = require 'gulp-watch'
 coffee = require 'gulp-coffee'
 concat = require 'gulp-concat'
-gutil = require 'gulp-util'
 browserSync = require('browser-sync').create()
-sourcemaps  = require 'gulp-sourcemaps'
 templateCache = require 'gulp-angular-templatecache'
-
-process.on 'uncaughtException', (err)->
-  if not watching then throw err else gutil.log err.stack || err
+streamqueue = require 'streamqueue'
 
 conf =
-  coffee: [
-    '**/*.coffee'
-    '*.coffee'
-    '!gulpfile.coffee'
-    '!node_modules/**/*.coffee'
+  dependencies_css: [
+    'node_modules/bootswatch/dist/sandstone/bootstrap.min.css'
   ]
-  target: './build/'
-  watch: [
-    '**/*.coffee'
-    '**/*.html'
+  dependencies_js: [
+    'node_modules/js-nacl/lib/nacl_factory.js'
+    'node_modules/theglow/dist/theglow.min.js'
+    'node_modules/angular/angular.min.js'
   ]
+  templates: ['src/**/*.html']
+  css: ['src/**/*.css']
+  coffee: ['src/**/*.coffee']
+  build: 'build/'
+  dist: 'dist/'
+  watch: ['src/**/*.coffee', 'src/**/*.css', '**/*.html']
 
-watching = false
+gulp.task 'css', ->
+  streamqueue objectMode: true,
+    gulp.src conf.dependencies_css
+    gulp.src conf.css
+  .pipe concat 'app.css'
+  .pipe gulp.dest conf.dist
 
-gulp.task 'coffee', ->
-  _coffee = gulp.src conf.coffee
-    .pipe(sourcemaps.init({loadMaps: true}))
-    .pipe coffee().on 'error', (e)->
-      _coffee.end()
-      if not watching then throw e else gutil.log e.stack || e
-    .pipe concat 'app.js'
-    .pipe(sourcemaps.write('./'))
-    .pipe gulp.dest conf.target
+gulp.task 'js', ->
+  streamqueue objectMode: true,
+    gulp.src conf.dependencies_js
+    gulp.src conf.coffee
+      .pipe coffee()
+    gulp.src conf.templates
+      .pipe templateCache(
+        module: 'app'
+        root: 'src/'
+      )
+  .pipe concat 'app.js'
+  .pipe gulp.dest conf.dist
 
-gulp.task 'templates', ->
-  gulp.src('**/*.template.html')
-    .pipe(templateCache(module: 'app'))
-    .pipe gulp.dest(conf.target)
+gulp.task 'dist', ['css', 'js']
+
+gulp.task 'build', ->
+  gulp.src conf.css
+  .pipe gulp.dest conf.build
+
+  gulp.src conf.coffee
+    .pipe coffee()
+  .pipe concat 'app.js'
+  .pipe gulp.dest conf.build
 
 gulp.task 'default', ['build'], ->
   browserSync.init
     server:
       baseDir: './'
-      index: 'index.html'
+      index: 'index-dev.html'
     notify: false
     online: true
     minify: false
@@ -53,7 +65,4 @@ gulp.task 'default', ['build'], ->
   gulp.watch conf.watch, ['watch']
 
 gulp.task 'watch', ['build'], ->
-  watching = true
   browserSync.reload()
-
-gulp.task 'build', ['templates', 'coffee']

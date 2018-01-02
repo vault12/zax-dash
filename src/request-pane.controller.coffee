@@ -1,9 +1,6 @@
 class RequestPaneController
   mailboxPrefix: "_mailbox"
-  constructor: (RelayService, $scope, $q)->
-    # hide notification divs
-    $('#key-confirmation').hide()
-    $('#send-confirmation').hide()
+  constructor: (RelayService, $scope, $q, $timeout)->
     # some names to play with
     first_names = ["Alice","Bob","Charlie","Chuck","Dave","Erin","Eve","Faith",
              "Frank","Mallory","Oscar","Peggy","Pat","Sam","Sally","Sybil",
@@ -17,22 +14,19 @@ class RequestPaneController
         else
           @names.push "#{name} #{i}"
 
+    $scope.relay_url = RelayService.relayUrl
+    $scope.editing_url = $scope.relay_url
+
+    $scope.updateRelay = ->
+      $scope.relay_url = $scope.editing_url
+      RelayService.changeRelay($scope.relay_url)
+      $scope.editing = false
+      $scope.refreshCounter()
 
     # what mailboxes are we looking at?
     $scope.mailboxes = RelayService.mailboxes
-    $scope.relay = RelayService.relay
-    $scope.activeMailbox = null
-
-    # assume we'll need to add a mailbox to play with
-    $scope.mailbox = {}
-    $scope.addMailboxVisible = true
-    $scope.quantity = 3
 
     # mailbox commands
-    $scope.messageCount = (mailbox)->
-      RelayService.messageCount(mailbox).then ->
-        $scope.$apply()
-
     $scope.getMessages = (mailbox)->
       RelayService.getMessages(mailbox).then (data)->
         if !mailbox.messages
@@ -40,7 +34,8 @@ class RequestPaneController
           mailbox.messagesNonces = []
         for msg in data
           unless mailbox.messagesNonces.indexOf(msg.nonce) != -1
-            console.log "incoming message:", msg
+            if msg.kind == 'file'
+              msg.data = '📎 uploadID: ' + JSON.parse(msg.data).uploadID
             mailbox.messagesNonces.push msg.nonce
             mailbox.messages.push msg
         $scope.$apply()
@@ -56,35 +51,55 @@ class RequestPaneController
             index = mailbox.messagesNonces.indexOf(msg)
             mailbox.messagesNonces.splice(index, 1)
             mailbox.messages.splice(index, 1)
+
+        mailbox.messageCount = Object.keys(mailbox.messages).length
         $scope.$apply()
 
-    $scope.sendMessage = (mailbox, outgoing)=>
+    $scope.sendMessage = (mailbox, outgoing)->
       RelayService.sendToVia(outgoing.recipient, mailbox, outgoing.message).then (data)->
-        $('#send-confirmation').show().fadeOut(3000)
+        $scope.messageSent = true
+        $timeout(->
+          $scope.messageSent = false
+          $scope.$apply()
+        , 3000)
         $scope.outgoing = {message: "", recipient: ""}
+        $scope.$apply()
 
     $scope.deleteMailbox = (mailbox)=>
       name = mailbox.identity
       RelayService.destroyMailbox(mailbox).then =>
         localStorage.removeItem "#{@mailboxPrefix}.#{name}"
+        $scope.activeMailbox = null
 
     # show the active mailbox messages
     $scope.selectMailbox = (mailbox)->
       $scope.activeMailbox = mailbox
+      $scope.getMessages(mailbox)
 
     # internals
     $scope.addMailbox = (name, options)=>
       RelayService.newMailbox(name, options).then (mailbox)=>
         localStorage.setItem "#{@mailboxPrefix}.#{name}", mailbox.identity
-        $scope.newMailbox = mailbox # {name: "", options: null}
 
     $scope.addMailboxes = (quantityToAdd)=>
       [1..quantityToAdd].reduce ((prev, i)=> prev.then => $scope.addMailbox @names.shift()), $q.all()
 
-    $scope.addPublicKey = (mailbox, key)=>
+    $scope.refreshCounter = ->
+      $scope.showRefreshLoader = true
+      total = Object.keys $scope.mailboxes
+      [0..total.length-1].reduce ((prev, i)=> prev.then => RelayService.messageCount $scope.mailboxes[total[i]]), $q.all()
+        .then ->
+          $scope.showRefreshLoader = false
+
+    $scope.addPublicKey = (mailbox, key)->
       if mailbox.keyRing.addGuest key.name, key.key
-        $('#key-confirmation').show().fadeOut(3000)
+        $scope.keyAdded = true
+        $timeout(->
+          $scope.keyAdded = false
+          $scope.$apply()
+        , 3000)
         $scope.pubKey = {name: "", key: ""}
+        $scope.$apply()
 
     # add any mailbox stored in localStorage
     next = $q.all()
@@ -93,7 +108,9 @@ class RequestPaneController
         ((key)->
           next = next.then -> $scope.addMailbox(localStorage.getItem(key))
         )(key)
-    next
+
+    next.then ->
+      $scope.refreshCounter()
 
 angular
   .module 'app'
@@ -101,5 +118,6 @@ angular
     'RelayService'
     '$scope'
     '$q'
+    '$timeout'
     RequestPaneController
   ]

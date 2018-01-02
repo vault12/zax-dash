@@ -1,0 +1,70 @@
+.navbar .form-inline input {
+  width: 300px;
+}
+
+table.table {
+  width: 100%;
+  table-layout: fixed;
+}
+
+div.overflow-wrap {
+  white-space: wrap;
+  word-break: break-all;
+  overflow: wrap;
+  text-overflow: ellipsis;
+}
+
+div.overflow-box {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+div.overflow-box:hover {
+  overflow: visible;
+  background: #fff;
+  margin: auto;
+  font-size: 1.2em;
+  width: 500px;
+  text-align: center;
+  height: 30px;
+  z-index: 1000;
+  position: relative;
+  padding: auto;
+}
+
+.badge {
+  transition: opacity 1s ease-in-out;
+  margin: 5px 0;
+  opacity: 0;
+}
+
+.list-group .badge {
+  opacity: 1;
+}
+
+.badge-show {
+  opacity: 1;
+}
+
+.list-group-item {
+  cursor: pointer;
+}
+
+.loader {
+  border: 4px solid #f3f3f3;
+  border-top: 4px solid #79a736;
+  border-radius: 50%;
+  width: 28px;
+  height: 28px;
+  animation: spin 2s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.btn-narrow {
+  line-height: 14px;
+}
