@@ -1190,7 +1190,8 @@ minFrac:2,minInt:1,negPre:"-\u00a4",negSuf:"",posPre:"\u00a4",posSuf:""}]},id:"e
         // internals
         $scope.addMailbox = (name, options) => {
           return RelayService.newMailbox(name, options).then((mailbox) => {
-            return localStorage.setItem(`${this.mailboxPrefix}.${name}`, mailbox.identity);
+            localStorage.setItem(`${this.mailboxPrefix}.${name}`, mailbox.identity);
+            return $scope.refreshCounter();
           });
         };
         $scope.addMailboxes = (quantityToAdd) => {

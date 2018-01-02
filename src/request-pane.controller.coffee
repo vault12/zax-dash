@@ -80,6 +80,7 @@ class RequestPaneController
     $scope.addMailbox = (name, options)=>
       RelayService.newMailbox(name, options).then (mailbox)=>
         localStorage.setItem "#{@mailboxPrefix}.#{name}", mailbox.identity
+        $scope.refreshCounter()
 
     $scope.addMailboxes = (quantityToAdd)=>
       [1..quantityToAdd].reduce ((prev, i)=> prev.then => $scope.addMailbox @names.shift()), $q.all()
