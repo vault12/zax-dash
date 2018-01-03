@@ -1,4 +1,4 @@
-class RequestPaneController
+class DashboardController
   mailboxPrefix: "_mailbox"
   constructor: (RelayService, $scope, $q, $timeout)->
     # some names to play with
@@ -117,10 +117,10 @@ class RequestPaneController
 
 angular
   .module 'app'
-  .controller 'RequestPaneController', [
+  .controller 'DashboardController', [
     'RelayService'
     '$scope'
     '$q'
     '$timeout'
-    RequestPaneController
+    DashboardController
   ]

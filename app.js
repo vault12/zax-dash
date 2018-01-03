@@ -946,153 +946,10 @@ minFrac:2,minInt:1,negPre:"-\u00a4",negSuf:"",posPre:"\u00a4",posSuf:""}]},id:"e
 }).call(this);
 
 (function() {
-  var RelayService;
+  var DashboardController;
 
-  RelayService = (function() {
-    class RelayService {
-      constructor($q, $http, $window) {
-        // mailbox wrapper
-        this.newMailbox = this.newMailbox.bind(this);
-        this.$q = $q;
-        this.$window = $window;
-        if (this.$window.location.origin.indexOf('github.io') > -1) {
-          // Use test server by default
-          // when running on http://vault12.github.io/zax-dash/
-          this.relayUrl = 'https://zax-test.vault12.com';
-        } else {
-          // Take care not to mix up ports of these services when
-          // both are running locally
-          this.relayUrl = this.$window.location.origin;
-        }
-        this.Mailbox = this.$window.glow.MailBox;
-        this.$window.glow.Utils.setAjaxImpl(function(url, data) {
-          return $http({
-            url: url,
-            method: 'POST',
-            headers: {
-              'Accept': 'text/plain',
-              'Content-Type': 'text/plain'
-            },
-            data: data,
-            timeout: 2000
-          }).then(function(response) {
-            return response.data;
-          });
-        });
-        this._initRelay();
-      }
-
-      changeRelay(newUrl) {
-        this.relayUrl = newUrl;
-        return this._initRelay();
-      }
-
-      // relay commands
-      messageCount(mailbox) {
-        return mailbox.connectToRelay(this.relay).then(() => {
-          return mailbox.relayCount(this.relay).then(function(count) {
-            mailbox.messageCount = count;
-            return count;
-          });
-        });
-      }
-
-      getMessages(mailbox) {
-        return mailbox.getRelayMessages(this.relay);
-      }
-
-      deleteMessages(mailbox, noncesToDelete) {
-        return mailbox.connectToRelay(this.relay).then(() => {
-          return mailbox.relayDelete(noncesToDelete, this.relay);
-        });
-      }
-
-      newMailbox(mailboxName, options = {}) {
-        var next;
-        // make our mailboxes
-        next = null;
-        if (options.secret) {
-          next = this.Mailbox.fromSecKey(options.secret.fromBase64(), mailboxName).then(function(mailbox) {
-            console.log(`created mailbox ${mailboxName}:${options.secret} from secret`);
-            return mailbox;
-          });
-        } else if (options.seed) {
-          next = this.Mailbox.fromSeed(options.seed, mailboxName).then(function(mailbox) {
-            console.log(`created mailbox ${mailboxName}:${options.seed} from seed`);
-            return mailbox;
-          });
-        } else {
-          next = this.Mailbox.new(mailboxName).then(function(mailbox) {
-            console.log(`created mailbox ${mailboxName} from scratch`);
-            return mailbox;
-          });
-        }
-        return next.then((mailbox) => {
-          var fn, mbx, name, ref, tasks;
-          // share keys among mailboxes
-          tasks = [];
-          ref = this.mailboxes;
-          fn = function(name, mbx) {
-            return tasks.push(mbx.keyRing.addGuest(mailbox.identity, mailbox.getPubCommKey()).then(function() {
-              return mailbox.keyRing.addGuest(mbx.identity, mbx.getPubCommKey());
-            }));
-          };
-          for (name in ref) {
-            mbx = ref[name];
-            fn(name, mbx);
-          }
-          return this.$q.all(tasks).then(() => {
-            // save the mailbox
-            this.mailboxes[mailbox.identity] = mailbox;
-            return mailbox;
-          });
-        });
-      }
-
-      destroyMailbox(mailbox) {
-        var mbx, name, ref, tasks;
-        tasks = [];
-        ref = this.mailboxes;
-        for (name in ref) {
-          mbx = ref[name];
-          if (mailbox.keyRing.storage.root === mbx.keyRing.storage.root) {
-            ((mailbox, name) => {
-              return tasks.push(mailbox.selfDestruct(true).then(() => {
-                console.log('deleting ' + name);
-                return delete this.mailboxes[name];
-              }));
-            })(mailbox, name);
-          }
-        }
-        return this.$q.all(tasks);
-      }
-
-      sendToVia(recipient, mailbox, message) {
-        return mailbox.sendToVia(recipient, this.relay, message);
-      }
-
-      _initRelay() {
-        this.$window.glow.CryptoStorage.startStorageSystem(new this.$window.glow.SimpleStorageDriver(this.relayUrl));
-        return this.relay = new this.$window.glow.Relay(this.relayUrl);
-      }
-
-    };
-
-    RelayService.prototype.mailboxes = {};
-
-    return RelayService;
-
-  })();
-
-  angular.module('app').service('RelayService', ['$q', '$http', '$window', RelayService]);
-
-}).call(this);
-
-(function() {
-  var RequestPaneController;
-
-  RequestPaneController = (function() {
-    class RequestPaneController {
+  DashboardController = (function() {
+    class DashboardController {
       constructor(RelayService, $scope, $q, $timeout) {
         var first_names, i, j, k, key, l, len, len1, name, next, ref;
         // some names to play with
@@ -1259,27 +1116,170 @@ minFrac:2,minInt:1,negPre:"-\u00a4",negSuf:"",posPre:"\u00a4",posSuf:""}]},id:"e
 
     };
 
-    RequestPaneController.prototype.mailboxPrefix = "_mailbox";
+    DashboardController.prototype.mailboxPrefix = "_mailbox";
 
-    return RequestPaneController;
+    return DashboardController;
 
   })();
 
-  angular.module('app').controller('RequestPaneController', ['RelayService', '$scope', '$q', '$timeout', RequestPaneController]);
+  angular.module('app').controller('DashboardController', ['RelayService', '$scope', '$q', '$timeout', DashboardController]);
 
 }).call(this);
 
 (function() {
-  angular.module('app').directive('requestPane', function() {
+  angular.module('app').directive('dashboard', function() {
     return {
       replace: true,
       restrict: 'E',
-      templateUrl: 'src/request-pane.template.html',
-      controller: 'RequestPaneController',
+      templateUrl: 'src/dashboard.template.html',
+      controller: 'DashboardController',
       scope: '='
     };
   });
 
 }).call(this);
 
-angular.module('app').run(['$templateCache', function($templateCache) {$templateCache.put('src/request-pane.template.html','<div>\n  <nav class="navbar navbar-expand-lg navbar-dark bg-primary mb-4">\n    <div class="container">\n      <a class="navbar-brand" href="">Zax Relay</a>\n      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar" aria-controls="navbar" aria-expanded="false"\n        aria-label="Toggle navigation">\n        <span class="navbar-toggler-icon"></span>\n      </button>\n\n      <div class="collapse navbar-collapse" id="navbar">\n        <form class="form-inline mr-auto">\n          <div class="form-group" ng-show="!editing">\n            <label for="relayURL" class="sr-only">Relay URL</label>\n            <input type="text" readonly class="form-control ml-sm-4 mr-sm-2" placeholder="Relay URL" id="relayURL" ng-model="relay_url">\n          </div>\n          <div class="form-group" ng-show="editing">\n            <label for="relayURL2" class="sr-only">Relay URL</label>\n            <input type="text" class="form-control ml-sm-4 mr-sm-2" id="relayURL2" placeholder="Relay URL" ng-model="editing_url">\n          </div>\n          <button class="btn btn-success my-2 mr-2 my-sm-0" ng-show="editing" ng-click="updateRelay()">Save</button>\n          <button class="btn btn-secondary my-2 my-sm-0" ng-click="editing = !editing">{{ editing ? \'Cancel\' : \'Change\' }}</button>\n        </form>\n        <ul class="navbar-nav my-2 my-lg-0">\n          <li class="nav-item">\n            <a class="nav-link" href="http://bit.ly/nacl_relay_spec" target="_blank">Technical spec</a>\n          </li>\n          <li class="nav-item">\n            <a class="nav-link" href="https://github.com/vault12/zax-dash" target="_blank">GitHub</a>\n          </li>\n          <li class="nav-item">\n            <a class="nav-link" href="https://slack.vault12.com/" target="_blank">Slack</a>\n          </li>\n        </ul>\n      </div>\n    </div>\n  </nav>\n\n  <!--<div class="alert alert-dismissible alert-danger">\n      <div class="container">\n          <button type="button" class="close" data-dismiss="alert">&times;</button>\n          <strong>This relay should not be used in production situations.</strong>\n          We often deploy new versions of this node without notice. For testing purposes,\n          <pre>relay.mailbox_timeout</pre> is set for 30 minutes.\n      </div>\n  </div>-->\n  <!--\n<div class="panel panel-primary info-pane" ng-hide="infoVisible">\n    <div class="panel-body">\n        <div class="row">\n            <div class="col-md-12">\n                <b>Welcome!</b> This node runs the latest development version of\n                <a href="https://github.com/vault12/zax" target="_blank">Zax</a>. Zax is a\n                <a href="https://s3-us-west-1.amazonaws.com/vault12/zax_infogfx.jpg" target="_blank">NaCl-based Cryptographic Relay</a>. You can read the full\n                <a href="http://bit.ly/nacl_relay_spec" target="_blank">technical specification here</a>. The page you are currently viewing is a\n                <a href="https://github.com/vault12/zax-dash" target="_blank">standalone application</a>, designed to provide user-friendly access to this Zax instance. It is bundled\n                with the Zax source in the\n                <pre>/public</pre> directory. If you have any questions on how to use the Zax cryptography stack, please\n                <a href="https://slack.vault12.com/" target="_blank">join our Slack community</a>.\n            </div>\n        </div>\n    </div>\n</div>-->\n\n  <div class="container">\n    <div class="row">\n      <div class="col-sm-4 col-md-3">\n        <div ng-hide="mailboxes | isEmpty">\n          <button class="btn btn-success btn-narrow float-right mb-2" type="button" ng-click="refreshCounter()">\u27F3 Refresh</button>\n          <div class="loader float-right mr-2" ng-show="showRefreshLoader"></div>\n          <h4>Mailboxes</h4>\n          <div class="clearfix"></div>\n          <ul class="list-group mb-4">\n            <li class="list-group-item list-group-item-action d-flex justify-content-between align-items-center" ng-repeat="mailbox in mailboxes"\n              ng-click="selectMailbox(mailbox)" ng-class="{\'active\': mailbox == activeMailbox}">\n              {{mailbox.identity}}\n              <span class="badge badge-pill" ng-class="{\'badge-primary\': mailbox.messageCount > 0, \'badge-light\': mailbox.messageCount == 0}">\n                {{mailbox.messageCount}}</span>\n            </li>\n          </ul>\n        </div>\n        <button type="button" class="btn btn-block btn-outline-success" ng-click="activeMailbox = null" ng-hide="mailboxes | isEmpty">+ Add</button>\n      </div>\n\n      <div class="col-sm-8 col-md-9" ng-show="!activeMailbox">\n        <h2 class="text-center align-middle mt-8 mt-4 text-muted">No mailbox selected</h2>\n        <div class="col-md-6 offset-md-3">\n          <hr />\n          <ul class="nav nav-tabs" ng-init="newScreen = \'new\'">\n            <li class="nav-item">\n              <a class="nav-link" ng-class="{\'active\': newScreen == \'new\'}" href="#" ng-click="newScreen = \'new\'">New</a>\n            </li>\n            <li class="nav-item">\n              <a class="nav-link" ng-class="{\'active\': newScreen == \'seed\'}" href="#" ng-click="newScreen = \'seed\'">From Seed</a>\n            </li>\n            <li class="nav-item">\n              <a class="nav-link" ng-class="{\'active\': newScreen == \'secret\'}" href="#" ng-click="newScreen = \'secret\'">From Secret key</a>\n            </li>\n            <li class="nav-item">\n              <a class="nav-link" ng-class="{\'active\': newScreen == \'multiple\'}" href="#" ng-click="newScreen = \'multiple\'">Multiple</a>\n            </li>\n          </ul>\n          <div class="form-group mt-4" ng-show="newScreen != \'multiple\'">\n            <input type="text" class="form-control" ng-model="newMailbox.name" placeholder="Mailbox name">\n            <button class="btn btn-success btn-block mt-3" ng-show="newScreen == \'new\'" type="button" ng-click="addMailbox(newMailbox.name)">Add</button>\n          </div>\n          <div class="form-group" ng-hide="newScreen != \'seed\'">\n            <input type="text" class="form-control" ng-model="newMailbox.seed" placeholder="Seed">\n            <button class="btn btn-success btn-block mt-3" type="button" ng-click="addMailbox(newMailbox.name, {seed:newMailbox.seed})">Add</button>\n          </div>\n          <div class="form-group" ng-hide="newScreen != \'secret\'">\n            <input type="text" class="form-control" ng-model="newMailbox.secret" placeholder="Secret">\n            <button class="btn btn-success btn-block mt-3" type="button" ng-click="addMailbox(newMailbox.name, {secret:newMailbox.secret})">Add</button>\n          </div>\n\n          <div class="form-group mt-4" ng-show="newScreen == \'multiple\'">\n            <select class="custom-select form-control" ng-init="quantity = \'3\'" ng-model="quantity">\n              <option value="2">2</option>\n              <option value="3">3</option>\n              <option value="4">4</option>\n              <option value="5">5</option>\n              <option value="10">10</option>\n            </select>\n            <button class="btn btn-success btn-block mt-3" type="button" ng-click="addMailboxes(quantity)">Add Multiple Mailboxes</button>\n          </div>\n        </div>\n      </div>\n\n      <div class="col-sm-8 col-md-9" ng-if="activeMailbox" ng-init="subscreen = \'inbox\'">\n        <button class="btn btn-danger float-right" ng-click="deleteMailbox(activeMailbox)">Delete Mailbox</button>\n        <h4>{{activeMailbox.identity}}</h4>\n        <form class="mt-4">\n          <div class="form-group row">\n            <label for="secretKey" class="col-sm-2 col-form-label">Secret Key</label>\n            <div class="col-sm-10">\n              <input type="text" readonly class="form-control" id="secretKey" value="{{activeMailbox.keyRing.commKey.strSecKey()}}">\n            </div>\n          </div>\n          <div class="form-group row">\n            <label for="publicKey" class="col-sm-2 col-form-label">Public Key</label>\n            <div class="col-sm-10">\n              <input type="text" readonly class="form-control" id="publicKey" value="{{activeMailbox.keyRing.commKey.strPubKey()}}">\n            </div>\n          </div>\n        </form>\n\n        <ul class="nav nav-tabs">\n          <li class="nav-item">\n            <a class="nav-link active" ng-class="{\'active\': subscreen == \'inbox\'}" ng-click="subscreen = \'inbox\'" href="#">Inbox</a>\n          </li>\n          <li class="nav-item">\n            <a class="nav-link" ng-class="{\'active\': subscreen == \'sendMessage\'}" ng-click="subscreen = \'sendMessage\'" href="#">Send a message</a>\n          </li>\n          <li class="nav-item">\n            <a class="nav-link" ng-class="{\'active\': subscreen == \'addKey\'}" ng-click="subscreen = \'addKey\'" href="#">Add public key</a>\n          </li>\n        </ul>\n\n        <div class="row" ng-show="subscreen == \'inbox\'">\n          <div class="col-sm-12" ng-show="activeMailbox.messageCount == 0">\n            <h2 class="text-center align-middle mt-8 mt-4 text-muted">No messages</h2>\n          </div>\n          <div class="col-sm-12" ng-show="activeMailbox.messageCount > 0">\n            <button class="btn btn-success mt-4 mb-4" type="button" ng-click="getMessages(activeMailbox)">Fetch All</button>\n            <button class="btn btn-danger mt-4 mb-4 float-right" type="button" ng-click="deleteMessages(activeMailbox)">Delete All</button>\n            <table class="table table-striped">\n              <thead>\n                <tr>\n                  <th>From</th>\n                  <th>Nonce</th>\n                  <th>Time</th>\n                  <th>Message</th>\n                  <th></th>\n                </tr>\n              </thead>\n              <tr ng-repeat="message in activeMailbox.messages">\n                <td>\n                  <div class="overflow-box" ng-click="selectText(e)">{{message.fromTag || message.from}}</div>\n                </td>\n                <td>\n                  <div class="overflow-box">{{message.nonce}}</div>\n                </td>\n                <td>\n                  <div class="overflow-box">{{message.time * 1000 | date:\'short\'}}</div>\n                </td>\n                <td>\n                  <div class="overflow-wrap">{{message.msg || message.data}}</div>\n                </td>\n                <td>\n                  <button class="btn btn-mini btn-danger" ng-click="deleteMessages(activeMailbox, [message.nonce])">\n                    <i class="glyphicon glyphicon-remove"></i> Delete\n                  </button>\n                </td>\n              </tr>\n            </table>\n          </div>\n        </div>\n\n        <div class="row" ng-show="subscreen == \'sendMessage\'">\n          <div class="col-sm-6">\n            <span class="badge badge-success" ng-class="{\'badge-show\': messageSent}">Message sent!</span>\n            <select type="text" ng-model="outgoing.recipient" class="form-control custom-select">\n              <option value="" disabled selected>Recipient</option>\n              <option ng-repeat="(guest, pubKey) in activeMailbox.keyRing.guestKeys" value="{{guest}}">{{guest}}</option>\n            </select>\n            <textarea ng-model="outgoing.message" placeholder="Message" rows="3" class="form-control mt-2"></textarea>\n            <button class="btn btn-success btn-lg btn-block mt-2" type="button" ng-click="sendMessage(activeMailbox, outgoing)">Send</button>\n          </div>\n        </div>\n\n        <div class="row" ng-show="subscreen == \'addKey\'">\n          <div class="col-sm-6">\n            <span class="badge badge-success" ng-class="{\'badge-show\': keyAdded}">Key added!</span>\n            <input type="text" ng-model="pubKey.name" placeholder="User Name" class="form-control">\n            <input type="text" ng-model="pubKey.key" placeholder="Public Key (Base64)" class="form-control mt-2">\n            <button class="btn btn-success btn-lg btn-block mt-2" type="button" ng-click="addPublicKey(activeMailbox, pubKey)">Add</button>\n          </div>\n        </div>\n      </div>\n    </div>\n  </div>\n</div>');}]);
+(function() {
+  var RelayService;
+
+  RelayService = (function() {
+    class RelayService {
+      constructor($q, $http, $window) {
+        // mailbox wrapper
+        this.newMailbox = this.newMailbox.bind(this);
+        this.$q = $q;
+        this.$window = $window;
+        if (this.$window.location.origin.indexOf('github.io') > -1) {
+          // Use test server by default
+          // when running on http://vault12.github.io/zax-dash/
+          this.relayUrl = 'https://zax-test.vault12.com';
+        } else {
+          // Take care not to mix up ports of these services when
+          // both are running locally
+          this.relayUrl = this.$window.location.origin;
+        }
+        this.Mailbox = this.$window.glow.MailBox;
+        this.$window.glow.Utils.setAjaxImpl(function(url, data) {
+          return $http({
+            url: url,
+            method: 'POST',
+            headers: {
+              'Accept': 'text/plain',
+              'Content-Type': 'text/plain'
+            },
+            data: data,
+            timeout: 2000
+          }).then(function(response) {
+            return response.data;
+          });
+        });
+        this._initRelay();
+      }
+
+      changeRelay(newUrl) {
+        this.relayUrl = newUrl;
+        return this._initRelay();
+      }
+
+      // relay commands
+      messageCount(mailbox) {
+        return mailbox.connectToRelay(this.relay).then(() => {
+          return mailbox.relayCount(this.relay).then(function(count) {
+            mailbox.messageCount = count;
+            return count;
+          });
+        });
+      }
+
+      getMessages(mailbox) {
+        return mailbox.getRelayMessages(this.relay);
+      }
+
+      deleteMessages(mailbox, noncesToDelete) {
+        return mailbox.connectToRelay(this.relay).then(() => {
+          return mailbox.relayDelete(noncesToDelete, this.relay);
+        });
+      }
+
+      newMailbox(mailboxName, options = {}) {
+        var next;
+        // make our mailboxes
+        next = null;
+        if (options.secret) {
+          next = this.Mailbox.fromSecKey(options.secret.fromBase64(), mailboxName).then(function(mailbox) {
+            console.log(`created mailbox ${mailboxName}:${options.secret} from secret`);
+            return mailbox;
+          });
+        } else if (options.seed) {
+          next = this.Mailbox.fromSeed(options.seed, mailboxName).then(function(mailbox) {
+            console.log(`created mailbox ${mailboxName}:${options.seed} from seed`);
+            return mailbox;
+          });
+        } else {
+          next = this.Mailbox.new(mailboxName).then(function(mailbox) {
+            console.log(`created mailbox ${mailboxName} from scratch`);
+            return mailbox;
+          });
+        }
+        return next.then((mailbox) => {
+          var fn, mbx, name, ref, tasks;
+          // share keys among mailboxes
+          tasks = [];
+          ref = this.mailboxes;
+          fn = function(name, mbx) {
+            return tasks.push(mbx.keyRing.addGuest(mailbox.identity, mailbox.getPubCommKey()).then(function() {
+              return mailbox.keyRing.addGuest(mbx.identity, mbx.getPubCommKey());
+            }));
+          };
+          for (name in ref) {
+            mbx = ref[name];
+            fn(name, mbx);
+          }
+          return this.$q.all(tasks).then(() => {
+            // save the mailbox
+            this.mailboxes[mailbox.identity] = mailbox;
+            return mailbox;
+          });
+        });
+      }
+
+      destroyMailbox(mailbox) {
+        var mbx, name, ref, tasks;
+        tasks = [];
+        ref = this.mailboxes;
+        for (name in ref) {
+          mbx = ref[name];
+          if (mailbox.keyRing.storage.root === mbx.keyRing.storage.root) {
+            ((mailbox, name) => {
+              return tasks.push(mailbox.selfDestruct(true).then(() => {
+                console.log('deleting ' + name);
+                return delete this.mailboxes[name];
+              }));
+            })(mailbox, name);
+          }
+        }
+        return this.$q.all(tasks);
+      }
+
+      sendToVia(recipient, mailbox, message) {
+        return mailbox.sendToVia(recipient, this.relay, message);
+      }
+
+      _initRelay() {
+        this.$window.glow.CryptoStorage.startStorageSystem(new this.$window.glow.SimpleStorageDriver(this.relayUrl));
+        return this.relay = new this.$window.glow.Relay(this.relayUrl);
+      }
+
+    };
+
+    RelayService.prototype.mailboxes = {};
+
+    return RelayService;
+
+  })();
+
+  angular.module('app').service('RelayService', ['$q', '$http', '$window', RelayService]);
+
+}).call(this);
+
+angular.module('app').run(['$templateCache', function($templateCache) {$templateCache.put('src/dashboard.template.html','<div>\n  <nav class="navbar navbar-expand-lg navbar-dark bg-primary mb-4">\n    <div class="container">\n      <a class="navbar-brand" href="">Zax Relay</a>\n      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar" aria-controls="navbar" aria-expanded="false"\n        aria-label="Toggle navigation">\n        <span class="navbar-toggler-icon"></span>\n      </button>\n\n      <div class="collapse navbar-collapse" id="navbar">\n        <form class="form-inline mr-auto">\n          <div class="form-group" ng-show="!editing">\n            <label for="relayURL" class="sr-only">Relay URL</label>\n            <input type="text" readonly class="form-control ml-sm-4 mr-sm-2" placeholder="Relay URL" id="relayURL" ng-model="relay_url">\n          </div>\n          <div class="form-group" ng-show="editing">\n            <label for="relayURL2" class="sr-only">Relay URL</label>\n            <input type="text" class="form-control ml-sm-4 mr-sm-2" id="relayURL2" placeholder="Relay URL" ng-model="editing_url">\n          </div>\n          <button class="btn btn-success my-2 mr-2 my-sm-0" ng-show="editing" ng-click="updateRelay()">Save</button>\n          <button class="btn btn-secondary my-2 my-sm-0" ng-click="editing = !editing">{{ editing ? \'Cancel\' : \'Change\' }}</button>\n        </form>\n        <ul class="navbar-nav my-2 my-lg-0">\n          <li class="nav-item">\n            <a class="nav-link" href="http://bit.ly/nacl_relay_spec" target="_blank">Technical spec</a>\n          </li>\n          <li class="nav-item">\n            <a class="nav-link" href="https://github.com/vault12/zax-dash" target="_blank">GitHub</a>\n          </li>\n          <li class="nav-item">\n            <a class="nav-link" href="https://slack.vault12.com/" target="_blank">Slack</a>\n          </li>\n        </ul>\n      </div>\n    </div>\n  </nav>\n\n  <!--<div class="alert alert-dismissible alert-danger">\n      <div class="container">\n          <button type="button" class="close" data-dismiss="alert">&times;</button>\n          <strong>This relay should not be used in production situations.</strong>\n          We often deploy new versions of this node without notice. For testing purposes,\n          <pre>relay.mailbox_timeout</pre> is set for 30 minutes.\n      </div>\n  </div>-->\n  <!--\n<div class="panel panel-primary info-pane" ng-hide="infoVisible">\n    <div class="panel-body">\n        <div class="row">\n            <div class="col-md-12">\n                <b>Welcome!</b> This node runs the latest development version of\n                <a href="https://github.com/vault12/zax" target="_blank">Zax</a>. Zax is a\n                <a href="https://s3-us-west-1.amazonaws.com/vault12/zax_infogfx.jpg" target="_blank">NaCl-based Cryptographic Relay</a>. You can read the full\n                <a href="http://bit.ly/nacl_relay_spec" target="_blank">technical specification here</a>. The page you are currently viewing is a\n                <a href="https://github.com/vault12/zax-dash" target="_blank">standalone application</a>, designed to provide user-friendly access to this Zax instance. It is bundled\n                with the Zax source in the\n                <pre>/public</pre> directory. If you have any questions on how to use the Zax cryptography stack, please\n                <a href="https://slack.vault12.com/" target="_blank">join our Slack community</a>.\n            </div>\n        </div>\n    </div>\n</div>-->\n\n  <div class="container">\n    <div class="row">\n      <div class="col-sm-4 col-md-3">\n        <div ng-hide="mailboxes | isEmpty">\n          <button class="btn btn-success btn-narrow float-right mb-2" type="button" ng-click="refreshCounter()">\u27F3 Refresh</button>\n          <div class="loader float-right mr-2" ng-show="showRefreshLoader"></div>\n          <h4>Mailboxes</h4>\n          <div class="clearfix"></div>\n          <ul class="list-group mb-4">\n            <li class="list-group-item list-group-item-action d-flex justify-content-between align-items-center" ng-repeat="mailbox in mailboxes"\n              ng-click="selectMailbox(mailbox)" ng-class="{\'active\': mailbox == activeMailbox}">\n              {{mailbox.identity}}\n              <span class="badge badge-pill" ng-class="{\'badge-primary\': mailbox.messageCount > 0, \'badge-light\': mailbox.messageCount == 0}">\n                {{mailbox.messageCount}}</span>\n            </li>\n          </ul>\n        </div>\n        <button type="button" class="btn btn-block btn-outline-success" ng-click="activeMailbox = null" ng-hide="mailboxes | isEmpty">+ Add</button>\n      </div>\n\n      <div class="col-sm-8 col-md-9" ng-show="!activeMailbox">\n        <h2 class="text-center align-middle mt-8 mt-4 text-muted">No mailbox selected</h2>\n        <div class="col-md-6 offset-md-3">\n          <hr />\n          <ul class="nav nav-tabs" ng-init="newScreen = \'new\'">\n            <li class="nav-item">\n              <a class="nav-link" ng-class="{\'active\': newScreen == \'new\'}" href="#" ng-click="newScreen = \'new\'">New</a>\n            </li>\n            <li class="nav-item">\n              <a class="nav-link" ng-class="{\'active\': newScreen == \'seed\'}" href="#" ng-click="newScreen = \'seed\'">From Seed</a>\n            </li>\n            <li class="nav-item">\n              <a class="nav-link" ng-class="{\'active\': newScreen == \'secret\'}" href="#" ng-click="newScreen = \'secret\'">From Secret key</a>\n            </li>\n            <li class="nav-item">\n              <a class="nav-link" ng-class="{\'active\': newScreen == \'multiple\'}" href="#" ng-click="newScreen = \'multiple\'">Multiple</a>\n            </li>\n          </ul>\n          <div class="form-group mt-4" ng-show="newScreen != \'multiple\'">\n            <input type="text" class="form-control" ng-model="newMailbox.name" placeholder="Mailbox name">\n            <button class="btn btn-success btn-block mt-3" ng-show="newScreen == \'new\'" type="button" ng-click="addMailbox(newMailbox.name)">Add</button>\n          </div>\n          <div class="form-group" ng-hide="newScreen != \'seed\'">\n            <input type="text" class="form-control" ng-model="newMailbox.seed" placeholder="Seed">\n            <button class="btn btn-success btn-block mt-3" type="button" ng-click="addMailbox(newMailbox.name, {seed:newMailbox.seed})">Add</button>\n          </div>\n          <div class="form-group" ng-hide="newScreen != \'secret\'">\n            <input type="text" class="form-control" ng-model="newMailbox.secret" placeholder="Secret">\n            <button class="btn btn-success btn-block mt-3" type="button" ng-click="addMailbox(newMailbox.name, {secret:newMailbox.secret})">Add</button>\n          </div>\n\n          <div class="form-group mt-4" ng-show="newScreen == \'multiple\'">\n            <select class="custom-select form-control" ng-init="quantity = \'3\'" ng-model="quantity">\n              <option value="2">2</option>\n              <option value="3">3</option>\n              <option value="4">4</option>\n              <option value="5">5</option>\n              <option value="10">10</option>\n            </select>\n            <button class="btn btn-success btn-block mt-3" type="button" ng-click="addMailboxes(quantity)">Add Multiple Mailboxes</button>\n          </div>\n        </div>\n      </div>\n\n      <div class="col-sm-8 col-md-9" ng-if="activeMailbox" ng-init="subscreen = \'inbox\'">\n        <button class="btn btn-danger float-right" ng-click="deleteMailbox(activeMailbox)">Delete Mailbox</button>\n        <h4>{{activeMailbox.identity}}</h4>\n        <form class="mt-4">\n          <div class="form-group row">\n            <label for="secretKey" class="col-sm-2 col-form-label">Secret Key</label>\n            <div class="col-sm-10">\n              <input type="text" readonly class="form-control" id="secretKey" value="{{activeMailbox.keyRing.commKey.strSecKey()}}">\n            </div>\n          </div>\n          <div class="form-group row">\n            <label for="publicKey" class="col-sm-2 col-form-label">Public Key</label>\n            <div class="col-sm-10">\n              <input type="text" readonly class="form-control" id="publicKey" value="{{activeMailbox.keyRing.commKey.strPubKey()}}">\n            </div>\n          </div>\n        </form>\n\n        <ul class="nav nav-tabs">\n          <li class="nav-item">\n            <a class="nav-link active" ng-class="{\'active\': subscreen == \'inbox\'}" ng-click="subscreen = \'inbox\'" href="#">Inbox</a>\n          </li>\n          <li class="nav-item">\n            <a class="nav-link" ng-class="{\'active\': subscreen == \'sendMessage\'}" ng-click="subscreen = \'sendMessage\'" href="#">Send a message</a>\n          </li>\n          <li class="nav-item">\n            <a class="nav-link" ng-class="{\'active\': subscreen == \'addKey\'}" ng-click="subscreen = \'addKey\'" href="#">Add public key</a>\n          </li>\n        </ul>\n\n        <div class="row" ng-show="subscreen == \'inbox\'">\n          <div class="col-sm-12" ng-show="activeMailbox.messageCount == 0">\n            <h2 class="text-center align-middle mt-8 mt-4 text-muted">No messages</h2>\n          </div>\n          <div class="col-sm-12" ng-show="activeMailbox.messageCount > 0">\n            <button class="btn btn-success mt-4 mb-4" type="button" ng-click="getMessages(activeMailbox)">Fetch All</button>\n            <button class="btn btn-danger mt-4 mb-4 float-right" type="button" ng-click="deleteMessages(activeMailbox)">Delete All</button>\n            <table class="table table-striped">\n              <thead>\n                <tr>\n                  <th>From</th>\n                  <th>Nonce</th>\n                  <th>Time</th>\n                  <th>Message</th>\n                  <th></th>\n                </tr>\n              </thead>\n              <tr ng-repeat="message in activeMailbox.messages">\n                <td>\n                  <div class="overflow-box" ng-click="selectText(e)">{{message.fromTag || message.from}}</div>\n                </td>\n                <td>\n                  <div class="overflow-box">{{message.nonce}}</div>\n                </td>\n                <td>\n                  <div class="overflow-box">{{message.time * 1000 | date:\'short\'}}</div>\n                </td>\n                <td>\n                  <div class="overflow-wrap">{{message.msg || message.data}}</div>\n                </td>\n                <td>\n                  <button class="btn btn-mini btn-danger" ng-click="deleteMessages(activeMailbox, [message.nonce])">\n                    <i class="glyphicon glyphicon-remove"></i> Delete\n                  </button>\n                </td>\n              </tr>\n            </table>\n          </div>\n        </div>\n\n        <div class="row" ng-show="subscreen == \'sendMessage\'">\n          <div class="col-sm-6">\n            <span class="badge badge-success" ng-class="{\'badge-show\': messageSent}">Message sent!</span>\n            <select type="text" ng-model="outgoing.recipient" class="form-control custom-select">\n              <option value="" disabled selected>Recipient</option>\n              <option ng-repeat="(guest, pubKey) in activeMailbox.keyRing.guestKeys" value="{{guest}}">{{guest}}</option>\n            </select>\n            <textarea ng-model="outgoing.message" placeholder="Message" rows="3" class="form-control mt-2"></textarea>\n            <button class="btn btn-success btn-lg btn-block mt-2" type="button" ng-click="sendMessage(activeMailbox, outgoing)">Send</button>\n          </div>\n        </div>\n\n        <div class="row" ng-show="subscreen == \'addKey\'">\n          <div class="col-sm-6">\n            <span class="badge badge-success" ng-class="{\'badge-show\': keyAdded}">Key added!</span>\n            <input type="text" ng-model="pubKey.name" placeholder="User Name" class="form-control">\n            <input type="text" ng-model="pubKey.key" placeholder="Public Key (Base64)" class="form-control mt-2">\n            <button class="btn btn-success btn-lg btn-block mt-2" type="button" ng-click="addPublicKey(activeMailbox, pubKey)">Add</button>\n          </div>\n        </div>\n      </div>\n    </div>\n  </div>\n</div>');}]);
