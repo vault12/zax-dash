@@ -18,7 +18,7 @@ conf =
   css: ['src/**/*.css']
   coffee: ['src/**/*.coffee']
   build: 'build/'
-  dist: 'dist/'
+  dist: './'
   watch: ['src/**/*.coffee', 'src/**/*.css', '**/*.html']
 
 gulp.task 'css', ->
