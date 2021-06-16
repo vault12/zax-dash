@@ -1,3 +1,5 @@
+_This repository is discontinued: See https://github.com/vault12/zax-dashboard for the new reference dashboard implementation._
+
 # Zax-Dash
 
 Zax-Dash is a simple AngularJS single page app to interact with [Zax Relay](https://github.com/vault12/zax), a [NaCl-based Cryptographic Relay](https://s3-us-west-1.amazonaws.com/vault12/zax_infogfx.jpg). Zax-Dash uses the [Glow](https://github.com/vault12/glow) library to provide a user-friendly access point to given relay internal mailboxes. We maintain a live [Test Server](https://zax-test.vault12.com) that runs our latest build. For testing purposes expiration of any communication on that relay is set for 30 minutes. You can read the full [technical specification here](http://bit.ly/nacl_relay_spec).
